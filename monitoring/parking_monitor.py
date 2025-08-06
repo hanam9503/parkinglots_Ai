@@ -3,6 +3,7 @@ from datetime import datetime
 import threading
 import uuid
 import logging
+import time
 
 from detection.vehicle_detector import VehicleDetector
 from detection.plate_detector import PlateDetector
@@ -10,6 +11,7 @@ from processing.image_processor import ImageProcessor
 from processing.state_tracker import VehicleStateTracker
 from sync.server_sync import ServerSync
 from core.models import ParkingEvent, ParkingSpotStatus
+import config
 
 logger = logging.getLogger(__name__)
 
