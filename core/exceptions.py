@@ -363,6 +363,64 @@ class InitializationException(SystemException):
             details={"component": component, "reason": reason}
         )
 
+# Camera-related exceptions
+class CameraException(SystemException):
+    """Base exception for camera-related errors"""
+    pass
+
+class CameraConnectionException(CameraException):
+    """Exception raised for camera connection issues"""
+    
+    def __init__(self, camera_id: str, reason: str = None):
+        message = f"Failed to connect to camera '{camera_id}'"
+        if reason:
+            message += f": {reason}"
+        
+        super().__init__(
+            message=message,
+            error_code="CAMERA_CONNECTION_ERROR",
+            details={"camera_id": camera_id, "reason": reason}
+        )
+
+class CameraConfigException(CameraException):
+    """Exception raised for camera configuration issues"""
+    
+    def __init__(self, camera_id: str, config_issue: str):
+        message = f"Camera configuration error for '{camera_id}': {config_issue}"
+        
+        super().__init__(
+            message=message,
+            error_code="CAMERA_CONFIG_ERROR",
+            details={"camera_id": camera_id, "config_issue": config_issue}
+        )
+
+# Parking-specific exceptions
+class ParkingMonitorException(SystemException):
+    """Exception raised during parking monitoring operations"""
+    
+    def __init__(self, operation: str, reason: str = None, context: dict = None):
+        message = f"Parking monitor error during '{operation}'"
+        if reason:
+            message += f": {reason}"
+        
+        super().__init__(
+            message=message,
+            error_code="PARKING_MONITOR_ERROR",
+            details={"operation": operation, "reason": reason, "context": context or {}}
+        )
+
+class SpotConfigurationException(ParkingSystemException):
+    """Exception raised for parking spot configuration issues"""
+    
+    def __init__(self, spot_id: str, issue: str):
+        message = f"Parking spot configuration error for '{spot_id}': {issue}"
+        
+        super().__init__(
+            message=message,
+            error_code="SPOT_CONFIG_ERROR",
+            details={"spot_id": spot_id, "issue": issue}
+        )
+
 # Utility functions for exception handling
 def handle_exception(exception: Exception, logger=None, reraise: bool = True):
     """Universal exception handler"""

@@ -1,0 +1,150 @@
+2025-08-07 10:32:46 - root - INFO - setup_logging:119 - ============================================================
+2025-08-07 10:32:46 - root - INFO - setup_logging:120 - 🚀 ENHANCED PARKING SYSTEM - LOGGING INITIALIZED
+2025-08-07 10:32:46 - root - INFO - setup_logging:121 - ============================================================
+2025-08-07 10:32:46 - root - INFO - setup_logging:122 - 📝 Log Level: INFO
+2025-08-07 10:32:46 - root - INFO - setup_logging:123 - 📁 Log File: logs/parking_system_20250807.log
+2025-08-07 10:32:46 - root - INFO - setup_logging:124 - 🎨 Color Output: Enabled
+2025-08-07 10:32:46 - root - INFO - setup_logging:125 - 🔄 File Rotation: 10.0MB, 5 backups
+2025-08-07 10:32:47 - utils.file_utils - INFO - ensure_directories:40 - ✅ Ensured 9 directories exist
+2025-08-07 10:32:47 - root - INFO - main:59 - 🔄 Loading YOLO models...
+2025-08-07 10:32:47 - detection.model_loader - INFO - _get_optimal_device:42 - 🔥 CUDA available - GPU: NVIDIA GeForce GTX 1650 (4.0GB)
+2025-08-07 10:32:47 - detection.model_loader - WARNING - _get_optimal_device:48 - ⚠️ GPU memory insufficient (4.0GB), using CPU
+2025-08-07 10:32:47 - detection.model_loader - INFO - __init__:33 - 🔧 ModelManager initialized - Device: cpu
+2025-08-07 10:32:47 - detection.model_loader - INFO - __init__:34 -    Half precision: True
+2025-08-07 10:32:47 - detection.model_loader - INFO - __init__:35 -    Model compilation: True
+2025-08-07 10:32:47 - detection.model_loader - INFO - load_all_models:224 - 🚀 Loading all detection models...
+2025-08-07 10:32:47 - detection.model_loader - INFO - load_vehicle_model:105 - 🔄 Loading vehicle detection model from C:\Users\nam\runs\detect\train3\weights\best.pt
+2025-08-07 10:32:48 - detection.model_loader - INFO - _optimize_model:170 - 🔧 Compiling vehicle model for optimization
+2025-08-07 10:32:53 - detection.model_loader - INFO - _warmup_model:191 - 🔥 Warming up vehicle model...
+2025-08-07 10:33:47 - detection.model_loader - WARNING - _warmup_model:219 - ⚠️ Model warmup failed for vehicle: RuntimeError: Compiler: cl is not found.
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+2025-08-07 10:33:47 - detection.model_loader - INFO - load_vehicle_model:117 - ✅ Vehicle detection model loaded and optimized
+2025-08-07 10:33:47 - detection.model_loader - INFO - load_plate_model:141 - 🔄 Loading license plate detection model from G:\bkstar\parking AI\dataset\license-plate-finetune-v1m.pt
+2025-08-07 10:33:47 - detection.model_loader - INFO - _optimize_model:170 - 🔧 Compiling plate model for optimization
+2025-08-07 10:33:47 - detection.model_loader - INFO - _warmup_model:191 - 🔥 Warming up plate model...
+2025-08-07 10:34:42 - detection.model_loader - WARNING - _warmup_model:219 - ⚠️ Model warmup failed for plate: RuntimeError: Compiler: cl is not found.
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+2025-08-07 10:34:42 - detection.model_loader - INFO - load_plate_model:153 - ✅ License plate detection model loaded and optimized
+2025-08-07 10:34:42 - detection.model_loader - INFO - _log_model_info:260 - 📊 Vehicle Model Info:
+2025-08-07 10:34:42 - detection.model_loader - INFO - _log_model_info:262 -    name: vehicle
+2025-08-07 10:34:42 - detection.model_loader - INFO - _log_model_info:262 -    device: cpu
+2025-08-07 10:34:42 - detection.model_loader - INFO - _log_model_info:262 -    dtype: torch.float32
+2025-08-07 10:34:42 - detection.model_loader - INFO - _log_model_info:262 -    num_classes: 1
+2025-08-07 10:34:42 - detection.model_loader - INFO - _log_model_info:262 -    input_size: unknown
+2025-08-07 10:34:42 - detection.model_loader - INFO - _log_model_info:267 -    GPU Memory: 0.0MB allocated
+2025-08-07 10:34:42 - detection.model_loader - INFO - _log_model_info:260 - 📊 Plate Model Info:
+2025-08-07 10:34:42 - detection.model_loader - INFO - _log_model_info:262 -    name: plate
+2025-08-07 10:34:42 - detection.model_loader - INFO - _log_model_info:262 -    device: cpu
+2025-08-07 10:34:42 - detection.model_loader - INFO - _log_model_info:262 -    dtype: torch.float32
+2025-08-07 10:34:42 - detection.model_loader - INFO - _log_model_info:262 -    num_classes: 1
+2025-08-07 10:34:42 - detection.model_loader - INFO - _log_model_info:262 -    input_size: unknown
+2025-08-07 10:34:42 - detection.model_loader - INFO - _log_model_info:267 -    GPU Memory: 0.0MB allocated
+2025-08-07 10:34:42 - detection.model_loader - INFO - load_all_models:241 - ✅ All models loaded successfully
+2025-08-07 10:34:42 - root - INFO - main:61 - ✅ Models loaded successfully
+2025-08-07 10:34:42 - root - INFO - main:64 - 🔄 Loading parking spots configuration...
+2025-08-07 10:34:42 - utils.file_utils - INFO - load_parking_spots:77 - 📖 Loading parking spots from: config/parking_spots.json
+2025-08-07 10:34:42 - utils.file_utils - WARNING - load_parking_spots:102 - ⚠️ Invalid spot config at index 0: Missing required field: id
+2025-08-07 10:34:42 - utils.file_utils - WARNING - load_parking_spots:102 - ⚠️ Invalid spot config at index 1: Missing required field: id
+2025-08-07 10:34:42 - utils.file_utils - WARNING - load_parking_spots:102 - ⚠️ Invalid spot config at index 2: Missing required field: id
+2025-08-07 10:34:42 - utils.file_utils - WARNING - load_parking_spots:102 - ⚠️ Invalid spot config at index 3: Missing required field: id
+2025-08-07 10:34:42 - utils.file_utils - WARNING - load_parking_spots:102 - ⚠️ Invalid spot config at index 4: Missing required field: id
+2025-08-07 10:34:42 - utils.file_utils - WARNING - load_parking_spots:102 - ⚠️ Invalid spot config at index 5: Missing required field: id
+2025-08-07 10:34:42 - utils.file_utils - INFO - load_parking_spots:105 - ✅ Loaded 0 valid parking spots
+2025-08-07 10:34:42 - root - INFO - main:66 - ✅ Loaded 0 parking spots
+2025-08-07 10:34:42 - root - INFO - main:69 - 🔄 Initializing Enhanced Parking Monitor...
+2025-08-07 10:34:42 - monitoring.parking_monitor - INFO - __init__:121 - 🏁 Enhanced Parking Monitor initialized
+2025-08-07 10:34:42 - monitoring.parking_monitor - INFO - __init__:122 -    Parking spots: 0
+2025-08-07 10:34:42 - monitoring.parking_monitor - INFO - __init__:123 -    Detection stability threshold: 3
+2025-08-07 10:34:42 - detection.vehicle_detector - INFO - __init__:79 - 🚗 Enhanced Vehicle Detector initialized
+2025-08-07 10:34:42 - detection.vehicle_detector - INFO - __init__:80 -    Device: cpu
+2025-08-07 10:34:42 - detection.vehicle_detector - INFO - __init__:81 -    Confidence threshold: 0.6
+2025-08-07 10:34:42 - detection.vehicle_detector - INFO - __init__:82 -    Image size: 640
+2025-08-07 10:34:42 - detection.vehicle_detector - INFO - __init__:83 -    Supported classes: ['car', 'motorcycle', 'bus', 'truck']
+2025-08-07 10:34:42 - detection.plate_detector - INFO - __init__:69 - 🔢 Enhanced Plate Detector initialized
+2025-08-07 10:34:42 - detection.plate_detector - INFO - __init__:70 -    Device: cpu
+2025-08-07 10:34:42 - detection.plate_detector - INFO - __init__:71 -    Confidence threshold: 0.4
+2025-08-07 10:34:42 - detection.plate_detector - INFO - __init__:72 -    Image size: 416
+2025-08-07 10:34:42 - detection.plate_detector - INFO - __init__:73 -    Plate area range: 100-50000 pixels
+2025-08-07 10:34:42 - detection.plate_detector - INFO - __init__:74 -    Aspect ratio range: 0.5-5.0
+2025-08-07 10:34:42 - monitoring.parking_monitor - INFO - initialize_models:156 - ✅ Detection models initialized successfully
+2025-08-07 10:34:42 - monitoring.parking_monitor - INFO - start_monitoring:501 - 🚀 Parking monitoring started
+2025-08-07 10:34:42 - root - INFO - main:73 - ✅ Monitor initialized successfully
+2025-08-07 10:34:43 - root - INFO - main:98 - 🎬 Video info: 926 frames, 30.0 FPS, 30.9s duration
+2025-08-07 10:34:43 - root - INFO - main:110 - 🚀 Starting Enhanced Parking System...
+2025-08-07 10:34:51 - root - INFO - main:148 - ⚡ FPS: 3.8 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:34:54 - root - INFO - main:148 - ⚡ FPS: 5.2 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:34:58 - root - INFO - main:148 - ⚡ FPS: 6.0 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:34:59 - detection.vehicle_detector - INFO - _log_performance_stats:412 - 🚗 Vehicle Detection Performance (last 100 frames):
+2025-08-07 10:34:59 - detection.vehicle_detector - INFO - _log_performance_stats:413 -    Average time: 133.6ms
+2025-08-07 10:34:59 - detection.vehicle_detector - INFO - _log_performance_stats:414 -    Min/Max time: 74.4/2221.1ms
+2025-08-07 10:34:59 - detection.vehicle_detector - INFO - _log_performance_stats:415 -    FPS: 7.5
+2025-08-07 10:34:59 - detection.vehicle_detector - INFO - _log_performance_stats:416 -    Active tracks: 0
+2025-08-07 10:34:59 - detection.vehicle_detector - INFO - _log_performance_stats:417 -    Avg detections/frame: 0.0
+2025-08-07 10:34:59 - monitoring.parking_monitor - INFO - _log_performance_stats:462 - 🏁 Parking Monitor Performance (last 100 frames):
+2025-08-07 10:34:59 - monitoring.parking_monitor - INFO - _log_performance_stats:463 -    Processing time: 133.6ms avg, 2221.1ms max
+2025-08-07 10:34:59 - monitoring.parking_monitor - INFO - _log_performance_stats:464 -    Processing FPS: 7.5
+2025-08-07 10:34:59 - monitoring.parking_monitor - INFO - _log_performance_stats:465 -    Occupied spots: 0/0
+2025-08-07 10:34:59 - monitoring.parking_monitor - INFO - _log_performance_stats:466 -    Events generated: 0
+2025-08-07 10:35:02 - root - INFO - main:148 - ⚡ FPS: 6.4 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:35:05 - root - INFO - main:148 - ⚡ FPS: 6.7 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:35:09 - root - INFO - main:148 - ⚡ FPS: 7.0 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:35:11 - detection.vehicle_detector - INFO - _log_performance_stats:412 - 🚗 Vehicle Detection Performance (last 100 frames):
+2025-08-07 10:35:11 - detection.vehicle_detector - INFO - _log_performance_stats:413 -    Average time: 92.4ms
+2025-08-07 10:35:11 - detection.vehicle_detector - INFO - _log_performance_stats:414 -    Min/Max time: 74.8/143.7ms
+2025-08-07 10:35:11 - detection.vehicle_detector - INFO - _log_performance_stats:415 -    FPS: 10.8
+2025-08-07 10:35:11 - detection.vehicle_detector - INFO - _log_performance_stats:416 -    Active tracks: 0
+2025-08-07 10:35:11 - detection.vehicle_detector - INFO - _log_performance_stats:417 -    Avg detections/frame: 0.0
+2025-08-07 10:35:11 - monitoring.parking_monitor - INFO - _log_performance_stats:462 - 🏁 Parking Monitor Performance (last 100 frames):
+2025-08-07 10:35:11 - monitoring.parking_monitor - INFO - _log_performance_stats:463 -    Processing time: 92.5ms avg, 143.7ms max
+2025-08-07 10:35:11 - monitoring.parking_monitor - INFO - _log_performance_stats:464 -    Processing FPS: 10.8
+2025-08-07 10:35:11 - monitoring.parking_monitor - INFO - _log_performance_stats:465 -    Occupied spots: 0/0
+2025-08-07 10:35:11 - monitoring.parking_monitor - INFO - _log_performance_stats:466 -    Events generated: 0
+2025-08-07 10:35:13 - root - INFO - main:148 - ⚡ FPS: 7.0 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:35:13 - root - INFO - main:158 - 📊 System Summary:
+2025-08-07 10:35:13 - root - INFO - main:159 -    - Occupancy: 0.0% (0/0)
+2025-08-07 10:35:13 - root - INFO - main:161 -    - Processing: Frames=211, Events=0
+2025-08-07 10:35:13 - root - INFO - main:163 -    - Performance: 10.9 FPS, 91.7ms avg
+2025-08-07 10:35:17 - root - INFO - main:148 - ⚡ FPS: 7.1 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:35:20 - root - INFO - main:148 - ⚡ FPS: 7.2 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:35:24 - detection.vehicle_detector - INFO - _log_performance_stats:412 - 🚗 Vehicle Detection Performance (last 100 frames):
+2025-08-07 10:35:24 - detection.vehicle_detector - INFO - _log_performance_stats:413 -    Average time: 95.8ms
+2025-08-07 10:35:24 - detection.vehicle_detector - INFO - _log_performance_stats:414 -    Min/Max time: 72.8/160.6ms
+2025-08-07 10:35:24 - detection.vehicle_detector - INFO - _log_performance_stats:415 -    FPS: 10.4
+2025-08-07 10:35:24 - detection.vehicle_detector - INFO - _log_performance_stats:416 -    Active tracks: 0
+2025-08-07 10:35:24 - detection.vehicle_detector - INFO - _log_performance_stats:417 -    Avg detections/frame: 0.0
+2025-08-07 10:35:24 - monitoring.parking_monitor - INFO - _log_performance_stats:462 - 🏁 Parking Monitor Performance (last 100 frames):
+2025-08-07 10:35:24 - monitoring.parking_monitor - INFO - _log_performance_stats:463 -    Processing time: 95.9ms avg, 160.6ms max
+2025-08-07 10:35:24 - monitoring.parking_monitor - INFO - _log_performance_stats:464 -    Processing FPS: 10.4
+2025-08-07 10:35:24 - monitoring.parking_monitor - INFO - _log_performance_stats:465 -    Occupied spots: 0/0
+2025-08-07 10:35:24 - monitoring.parking_monitor - INFO - _log_performance_stats:466 -    Events generated: 0
+2025-08-07 10:35:24 - root - INFO - main:148 - ⚡ FPS: 7.3 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:35:27 - root - INFO - main:148 - ⚡ FPS: 7.4 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:35:31 - root - INFO - main:148 - ⚡ FPS: 7.5 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:35:34 - root - INFO - main:148 - ⚡ FPS: 7.6 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:35:35 - detection.vehicle_detector - INFO - _log_performance_stats:412 - 🚗 Vehicle Detection Performance (last 100 frames):
+2025-08-07 10:35:35 - detection.vehicle_detector - INFO - _log_performance_stats:413 -    Average time: 89.5ms
+2025-08-07 10:35:35 - detection.vehicle_detector - INFO - _log_performance_stats:414 -    Min/Max time: 75.2/110.5ms
+2025-08-07 10:35:35 - detection.vehicle_detector - INFO - _log_performance_stats:415 -    FPS: 11.2
+2025-08-07 10:35:35 - detection.vehicle_detector - INFO - _log_performance_stats:416 -    Active tracks: 0
+2025-08-07 10:35:35 - detection.vehicle_detector - INFO - _log_performance_stats:417 -    Avg detections/frame: 0.0
+2025-08-07 10:35:35 - monitoring.parking_monitor - INFO - _log_performance_stats:462 - 🏁 Parking Monitor Performance (last 100 frames):
+2025-08-07 10:35:35 - monitoring.parking_monitor - INFO - _log_performance_stats:463 -    Processing time: 89.5ms avg, 110.5ms max
+2025-08-07 10:35:35 - monitoring.parking_monitor - INFO - _log_performance_stats:464 -    Processing FPS: 11.2
+2025-08-07 10:35:35 - monitoring.parking_monitor - INFO - _log_performance_stats:465 -    Occupied spots: 0/0
+2025-08-07 10:35:35 - monitoring.parking_monitor - INFO - _log_performance_stats:466 -    Events generated: 0
+2025-08-07 10:35:38 - root - INFO - main:148 - ⚡ FPS: 7.6 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:35:41 - root - INFO - main:148 - ⚡ FPS: 7.7 | Occupancy: 0% | Occupied: 0/0 | Events: 0
+2025-08-07 10:35:43 - root - INFO - main:116 - 📹 End of video reached
+2025-08-07 10:35:43 - root - INFO - main:208 - 🧹 Starting cleanup...
+2025-08-07 10:35:43 - monitoring.parking_monitor - INFO - cleanup:510 - 🧹 Cleaning up parking monitor...
+2025-08-07 10:35:43 - monitoring.parking_monitor - INFO - stop_monitoring:506 - ⏹️ Parking monitoring stopped
+2025-08-07 10:35:43 - detection.vehicle_detector - INFO - cleanup:460 - 🧹 Cleaning up vehicle detector...
+2025-08-07 10:35:43 - detection.vehicle_detector - INFO - cleanup:466 - ✅ Vehicle detector cleanup completed
+2025-08-07 10:35:43 - detection.plate_detector - INFO - cleanup:485 - 🧹 Cleaning up plate detector...
+2025-08-07 10:35:43 - detection.plate_detector - INFO - cleanup:493 - ✅ Plate detector cleanup completed
+2025-08-07 10:35:43 - monitoring.parking_monitor - INFO - cleanup:525 - ✅ Parking monitor cleanup completed
+2025-08-07 10:35:43 - root - INFO - main:215 - 🔚 Enhanced Parking System completed
