@@ -99,3 +99,7 @@
 2025-08-07 14:29:14 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A6: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
 2025-08-07 14:29:31 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A6: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
 2025-08-07 14:29:38 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A3: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 15:14:40 - root - ERROR - main:76 - ❌ Initialization failed: name 'EnhancedParkingMonitor' is not defined
+2025-08-07 15:33:09 - root - ERROR - main:76 - ❌ Initialization failed: ParkingSpot.__init__() got an unexpected keyword argument 'capacity'
+2025-08-07 15:41:24 - root - ERROR - main:76 - ❌ Initialization failed: ParkingSpot.__init__() got an unexpected keyword argument 'capacity'
+2025-08-07 15:47:46 - root - ERROR - main:76 - ❌ Initialization failed: ParkingSpot.__init__() got an unexpected keyword argument 'capacity'

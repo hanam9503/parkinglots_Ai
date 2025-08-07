@@ -79,7 +79,7 @@ class ParkingEvent:
     confidence: float = 0.0
     vehicle_id: Optional[str] = None
 
-class ParkingMonitor:
+class EnhancedParkingMonitor:
     """Optimized parking monitor"""
     
     def __init__(self, spots_config: List[Dict]):

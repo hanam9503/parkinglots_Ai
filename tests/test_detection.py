@@ -1743,10 +1743,9 @@ def load_models():
 def load_parking_spots():
     """Load and preprocess parking spots configuration"""
     try:
-        config_file = 'parking_spots.json'
+        config_file = os.path.join('config', 'parking_spots.json')  # Sửa lại đường dẫn
         if not os.path.exists(config_file):
             raise FileNotFoundError(f"Parking spots configuration not found: {config_file}")
-        
         with open(config_file) as f:
             parking_data = json.load(f)
         

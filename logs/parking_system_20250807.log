@@ -1353,3 +1353,222 @@ Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especiall
 2025-08-07 14:29:45 - detection.plate_detector - INFO - cleanup:493 - ✅ Plate detector cleanup completed
 2025-08-07 14:29:45 - monitoring.parking_monitor - INFO - cleanup:717 - ✅ Parking monitor cleanup completed
 2025-08-07 14:29:45 - root - INFO - main:215 - 🔚 Enhanced Parking System completed
+2025-08-07 15:12:21 - root - INFO - setup_logging:119 - ============================================================
+2025-08-07 15:12:21 - root - INFO - setup_logging:120 - 🚀 ENHANCED PARKING SYSTEM - LOGGING INITIALIZED
+2025-08-07 15:12:21 - root - INFO - setup_logging:121 - ============================================================
+2025-08-07 15:12:21 - root - INFO - setup_logging:122 - 📝 Log Level: INFO
+2025-08-07 15:12:21 - root - INFO - setup_logging:123 - 📁 Log File: logs/parking_system_20250807.log
+2025-08-07 15:12:21 - root - INFO - setup_logging:124 - 🎨 Color Output: Enabled
+2025-08-07 15:12:21 - root - INFO - setup_logging:125 - 🔄 File Rotation: 10.0MB, 5 backups
+2025-08-07 15:13:33 - root - INFO - setup_logging:119 - ============================================================
+2025-08-07 15:13:33 - root - INFO - setup_logging:120 - 🚀 ENHANCED PARKING SYSTEM - LOGGING INITIALIZED
+2025-08-07 15:13:33 - root - INFO - setup_logging:121 - ============================================================
+2025-08-07 15:13:33 - root - INFO - setup_logging:122 - 📝 Log Level: INFO
+2025-08-07 15:13:33 - root - INFO - setup_logging:123 - 📁 Log File: logs/parking_system_20250807.log
+2025-08-07 15:13:33 - root - INFO - setup_logging:124 - 🎨 Color Output: Enabled
+2025-08-07 15:13:33 - root - INFO - setup_logging:125 - 🔄 File Rotation: 10.0MB, 5 backups
+2025-08-07 15:13:34 - utils.file_utils - INFO - ensure_directories:40 - ✅ Ensured 9 directories exist
+2025-08-07 15:13:34 - root - INFO - main:59 - 🔄 Loading YOLO models...
+2025-08-07 15:13:34 - detection.model_loader - INFO - _get_optimal_device:42 - 🔥 CUDA available - GPU: NVIDIA GeForce GTX 1650 (4.0GB)
+2025-08-07 15:13:34 - detection.model_loader - WARNING - _get_optimal_device:48 - ⚠️ GPU memory insufficient (4.0GB), using CPU
+2025-08-07 15:13:34 - detection.model_loader - INFO - __init__:33 - 🔧 ModelManager initialized - Device: cpu
+2025-08-07 15:13:34 - detection.model_loader - INFO - __init__:34 -    Half precision: True
+2025-08-07 15:13:34 - detection.model_loader - INFO - __init__:35 -    Model compilation: True
+2025-08-07 15:13:34 - detection.model_loader - INFO - load_all_models:224 - 🚀 Loading all detection models...
+2025-08-07 15:13:34 - detection.model_loader - INFO - load_vehicle_model:105 - 🔄 Loading vehicle detection model from model\yolo11s.pt
+2025-08-07 15:13:34 - detection.model_loader - INFO - _optimize_model:170 - 🔧 Compiling vehicle model for optimization
+2025-08-07 15:13:39 - detection.model_loader - INFO - _warmup_model:191 - 🔥 Warming up vehicle model...
+2025-08-07 15:13:58 - detection.model_loader - WARNING - _warmup_model:219 - ⚠️ Model warmup failed for vehicle: RuntimeError: Compiler: cl is not found.
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+2025-08-07 15:13:58 - detection.model_loader - INFO - load_vehicle_model:117 - ✅ Vehicle detection model loaded and optimized
+2025-08-07 15:13:58 - detection.model_loader - INFO - load_plate_model:141 - 🔄 Loading license plate detection model from model\license-plate-finetune-v1m.pt
+2025-08-07 15:13:59 - detection.model_loader - INFO - _optimize_model:170 - 🔧 Compiling plate model for optimization
+2025-08-07 15:13:59 - detection.model_loader - INFO - _warmup_model:191 - 🔥 Warming up plate model...
+2025-08-07 15:14:40 - detection.model_loader - WARNING - _warmup_model:219 - ⚠️ Model warmup failed for plate: RuntimeError: Compiler: cl is not found.
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+2025-08-07 15:14:40 - detection.model_loader - INFO - load_plate_model:153 - ✅ License plate detection model loaded and optimized
+2025-08-07 15:14:40 - detection.model_loader - INFO - _log_model_info:260 - 📊 Vehicle Model Info:
+2025-08-07 15:14:40 - detection.model_loader - INFO - _log_model_info:262 -    name: vehicle
+2025-08-07 15:14:40 - detection.model_loader - INFO - _log_model_info:262 -    device: cpu
+2025-08-07 15:14:40 - detection.model_loader - INFO - _log_model_info:262 -    dtype: torch.float32
+2025-08-07 15:14:40 - detection.model_loader - INFO - _log_model_info:262 -    num_classes: 80
+2025-08-07 15:14:40 - detection.model_loader - INFO - _log_model_info:262 -    input_size: unknown
+2025-08-07 15:14:40 - detection.model_loader - INFO - _log_model_info:267 -    GPU Memory: 0.0MB allocated
+2025-08-07 15:14:40 - detection.model_loader - INFO - _log_model_info:260 - 📊 Plate Model Info:
+2025-08-07 15:14:40 - detection.model_loader - INFO - _log_model_info:262 -    name: plate
+2025-08-07 15:14:40 - detection.model_loader - INFO - _log_model_info:262 -    device: cpu
+2025-08-07 15:14:40 - detection.model_loader - INFO - _log_model_info:262 -    dtype: torch.float32
+2025-08-07 15:14:40 - detection.model_loader - INFO - _log_model_info:262 -    num_classes: 1
+2025-08-07 15:14:40 - detection.model_loader - INFO - _log_model_info:262 -    input_size: unknown
+2025-08-07 15:14:40 - detection.model_loader - INFO - _log_model_info:267 -    GPU Memory: 0.0MB allocated
+2025-08-07 15:14:40 - detection.model_loader - INFO - load_all_models:241 - ✅ All models loaded successfully
+2025-08-07 15:14:40 - root - INFO - main:61 - ✅ Models loaded successfully
+2025-08-07 15:14:40 - root - INFO - main:64 - 🔄 Loading parking spots configuration...
+2025-08-07 15:14:40 - utils.file_utils - INFO - load_parking_spots:77 - 📖 Loading parking spots from: config/parking_spots.json
+2025-08-07 15:14:40 - utils.file_utils - INFO - load_parking_spots:105 - ✅ Loaded 6 valid parking spots
+2025-08-07 15:14:40 - root - INFO - main:66 - ✅ Loaded 6 parking spots
+2025-08-07 15:14:40 - root - INFO - main:69 - 🔄 Initializing Enhanced Parking Monitor...
+2025-08-07 15:14:40 - root - ERROR - main:76 - ❌ Initialization failed: name 'EnhancedParkingMonitor' is not defined
+2025-08-07 15:32:00 - root - INFO - setup_logging:119 - ============================================================
+2025-08-07 15:32:00 - root - INFO - setup_logging:120 - 🚀 ENHANCED PARKING SYSTEM - LOGGING INITIALIZED
+2025-08-07 15:32:00 - root - INFO - setup_logging:121 - ============================================================
+2025-08-07 15:32:00 - root - INFO - setup_logging:122 - 📝 Log Level: INFO
+2025-08-07 15:32:00 - root - INFO - setup_logging:123 - 📁 Log File: logs/parking_system_20250807.log
+2025-08-07 15:32:00 - root - INFO - setup_logging:124 - 🎨 Color Output: Enabled
+2025-08-07 15:32:00 - root - INFO - setup_logging:125 - 🔄 File Rotation: 10.0MB, 5 backups
+2025-08-07 15:32:02 - utils.file_utils - INFO - ensure_directories:40 - ✅ Ensured 9 directories exist
+2025-08-07 15:32:02 - root - INFO - main:59 - 🔄 Loading YOLO models...
+2025-08-07 15:32:02 - detection.model_loader - INFO - _get_optimal_device:42 - 🔥 CUDA available - GPU: NVIDIA GeForce GTX 1650 (4.0GB)
+2025-08-07 15:32:02 - detection.model_loader - WARNING - _get_optimal_device:48 - ⚠️ GPU memory insufficient (4.0GB), using CPU
+2025-08-07 15:32:02 - detection.model_loader - INFO - __init__:33 - 🔧 ModelManager initialized - Device: cpu
+2025-08-07 15:32:02 - detection.model_loader - INFO - __init__:34 -    Half precision: True
+2025-08-07 15:32:02 - detection.model_loader - INFO - __init__:35 -    Model compilation: True
+2025-08-07 15:32:02 - detection.model_loader - INFO - load_all_models:224 - 🚀 Loading all detection models...
+2025-08-07 15:32:02 - detection.model_loader - INFO - load_vehicle_model:105 - 🔄 Loading vehicle detection model from model\yolo11s.pt
+2025-08-07 15:32:02 - detection.model_loader - INFO - _optimize_model:170 - 🔧 Compiling vehicle model for optimization
+2025-08-07 15:32:06 - detection.model_loader - INFO - _warmup_model:191 - 🔥 Warming up vehicle model...
+2025-08-07 15:32:27 - detection.model_loader - WARNING - _warmup_model:219 - ⚠️ Model warmup failed for vehicle: RuntimeError: Compiler: cl is not found.
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+2025-08-07 15:32:27 - detection.model_loader - INFO - load_vehicle_model:117 - ✅ Vehicle detection model loaded and optimized
+2025-08-07 15:32:27 - detection.model_loader - INFO - load_plate_model:141 - 🔄 Loading license plate detection model from model\license-plate-finetune-v1m.pt
+2025-08-07 15:32:27 - detection.model_loader - INFO - _optimize_model:170 - 🔧 Compiling plate model for optimization
+2025-08-07 15:32:27 - detection.model_loader - INFO - _warmup_model:191 - 🔥 Warming up plate model...
+2025-08-07 15:33:09 - detection.model_loader - WARNING - _warmup_model:219 - ⚠️ Model warmup failed for plate: RuntimeError: Compiler: cl is not found.
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+2025-08-07 15:33:09 - detection.model_loader - INFO - load_plate_model:153 - ✅ License plate detection model loaded and optimized
+2025-08-07 15:33:09 - detection.model_loader - INFO - _log_model_info:260 - 📊 Vehicle Model Info:
+2025-08-07 15:33:09 - detection.model_loader - INFO - _log_model_info:262 -    name: vehicle
+2025-08-07 15:33:09 - detection.model_loader - INFO - _log_model_info:262 -    device: cpu
+2025-08-07 15:33:09 - detection.model_loader - INFO - _log_model_info:262 -    dtype: torch.float32
+2025-08-07 15:33:09 - detection.model_loader - INFO - _log_model_info:262 -    num_classes: 80
+2025-08-07 15:33:09 - detection.model_loader - INFO - _log_model_info:262 -    input_size: unknown
+2025-08-07 15:33:09 - detection.model_loader - INFO - _log_model_info:267 -    GPU Memory: 0.0MB allocated
+2025-08-07 15:33:09 - detection.model_loader - INFO - _log_model_info:260 - 📊 Plate Model Info:
+2025-08-07 15:33:09 - detection.model_loader - INFO - _log_model_info:262 -    name: plate
+2025-08-07 15:33:09 - detection.model_loader - INFO - _log_model_info:262 -    device: cpu
+2025-08-07 15:33:09 - detection.model_loader - INFO - _log_model_info:262 -    dtype: torch.float32
+2025-08-07 15:33:09 - detection.model_loader - INFO - _log_model_info:262 -    num_classes: 1
+2025-08-07 15:33:09 - detection.model_loader - INFO - _log_model_info:262 -    input_size: unknown
+2025-08-07 15:33:09 - detection.model_loader - INFO - _log_model_info:267 -    GPU Memory: 0.0MB allocated
+2025-08-07 15:33:09 - detection.model_loader - INFO - load_all_models:241 - ✅ All models loaded successfully
+2025-08-07 15:33:09 - root - INFO - main:61 - ✅ Models loaded successfully
+2025-08-07 15:33:09 - root - INFO - main:64 - 🔄 Loading parking spots configuration...
+2025-08-07 15:33:09 - utils.file_utils - INFO - load_parking_spots:77 - 📖 Loading parking spots from: config/parking_spots.json
+2025-08-07 15:33:09 - utils.file_utils - INFO - load_parking_spots:105 - ✅ Loaded 6 valid parking spots
+2025-08-07 15:33:09 - root - INFO - main:66 - ✅ Loaded 6 parking spots
+2025-08-07 15:33:09 - root - INFO - main:69 - 🔄 Initializing Enhanced Parking Monitor...
+2025-08-07 15:33:09 - root - ERROR - main:76 - ❌ Initialization failed: ParkingSpot.__init__() got an unexpected keyword argument 'capacity'
+2025-08-07 15:40:16 - root - INFO - setup_logging:119 - ============================================================
+2025-08-07 15:40:16 - root - INFO - setup_logging:120 - 🚀 ENHANCED PARKING SYSTEM - LOGGING INITIALIZED
+2025-08-07 15:40:16 - root - INFO - setup_logging:121 - ============================================================
+2025-08-07 15:40:16 - root - INFO - setup_logging:122 - 📝 Log Level: INFO
+2025-08-07 15:40:16 - root - INFO - setup_logging:123 - 📁 Log File: logs/parking_system_20250807.log
+2025-08-07 15:40:16 - root - INFO - setup_logging:124 - 🎨 Color Output: Enabled
+2025-08-07 15:40:16 - root - INFO - setup_logging:125 - 🔄 File Rotation: 10.0MB, 5 backups
+2025-08-07 15:40:18 - utils.file_utils - INFO - ensure_directories:40 - ✅ Ensured 9 directories exist
+2025-08-07 15:40:18 - root - INFO - main:59 - 🔄 Loading YOLO models...
+2025-08-07 15:40:18 - detection.model_loader - INFO - _get_optimal_device:42 - 🔥 CUDA available - GPU: NVIDIA GeForce GTX 1650 (4.0GB)
+2025-08-07 15:40:18 - detection.model_loader - WARNING - _get_optimal_device:48 - ⚠️ GPU memory insufficient (4.0GB), using CPU
+2025-08-07 15:40:18 - detection.model_loader - INFO - __init__:33 - 🔧 ModelManager initialized - Device: cpu
+2025-08-07 15:40:18 - detection.model_loader - INFO - __init__:34 -    Half precision: True
+2025-08-07 15:40:18 - detection.model_loader - INFO - __init__:35 -    Model compilation: True
+2025-08-07 15:40:18 - detection.model_loader - INFO - load_all_models:224 - 🚀 Loading all detection models...
+2025-08-07 15:40:18 - detection.model_loader - INFO - load_vehicle_model:105 - 🔄 Loading vehicle detection model from model\yolo11s.pt
+2025-08-07 15:40:18 - detection.model_loader - INFO - _optimize_model:170 - 🔧 Compiling vehicle model for optimization
+2025-08-07 15:40:22 - detection.model_loader - INFO - _warmup_model:191 - 🔥 Warming up vehicle model...
+2025-08-07 15:40:42 - detection.model_loader - WARNING - _warmup_model:219 - ⚠️ Model warmup failed for vehicle: RuntimeError: Compiler: cl is not found.
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+2025-08-07 15:40:42 - detection.model_loader - INFO - load_vehicle_model:117 - ✅ Vehicle detection model loaded and optimized
+2025-08-07 15:40:42 - detection.model_loader - INFO - load_plate_model:141 - 🔄 Loading license plate detection model from model\license-plate-finetune-v1m.pt
+2025-08-07 15:40:42 - detection.model_loader - INFO - _optimize_model:170 - 🔧 Compiling plate model for optimization
+2025-08-07 15:40:42 - detection.model_loader - INFO - _warmup_model:191 - 🔥 Warming up plate model...
+2025-08-07 15:41:24 - detection.model_loader - WARNING - _warmup_model:219 - ⚠️ Model warmup failed for plate: RuntimeError: Compiler: cl is not found.
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+2025-08-07 15:41:24 - detection.model_loader - INFO - load_plate_model:153 - ✅ License plate detection model loaded and optimized
+2025-08-07 15:41:24 - detection.model_loader - INFO - _log_model_info:260 - 📊 Vehicle Model Info:
+2025-08-07 15:41:24 - detection.model_loader - INFO - _log_model_info:262 -    name: vehicle
+2025-08-07 15:41:24 - detection.model_loader - INFO - _log_model_info:262 -    device: cpu
+2025-08-07 15:41:24 - detection.model_loader - INFO - _log_model_info:262 -    dtype: torch.float32
+2025-08-07 15:41:24 - detection.model_loader - INFO - _log_model_info:262 -    num_classes: 80
+2025-08-07 15:41:24 - detection.model_loader - INFO - _log_model_info:262 -    input_size: unknown
+2025-08-07 15:41:24 - detection.model_loader - INFO - _log_model_info:267 -    GPU Memory: 0.0MB allocated
+2025-08-07 15:41:24 - detection.model_loader - INFO - _log_model_info:260 - 📊 Plate Model Info:
+2025-08-07 15:41:24 - detection.model_loader - INFO - _log_model_info:262 -    name: plate
+2025-08-07 15:41:24 - detection.model_loader - INFO - _log_model_info:262 -    device: cpu
+2025-08-07 15:41:24 - detection.model_loader - INFO - _log_model_info:262 -    dtype: torch.float32
+2025-08-07 15:41:24 - detection.model_loader - INFO - _log_model_info:262 -    num_classes: 1
+2025-08-07 15:41:24 - detection.model_loader - INFO - _log_model_info:262 -    input_size: unknown
+2025-08-07 15:41:24 - detection.model_loader - INFO - _log_model_info:267 -    GPU Memory: 0.0MB allocated
+2025-08-07 15:41:24 - detection.model_loader - INFO - load_all_models:241 - ✅ All models loaded successfully
+2025-08-07 15:41:24 - root - INFO - main:61 - ✅ Models loaded successfully
+2025-08-07 15:41:24 - root - INFO - main:64 - 🔄 Loading parking spots configuration...
+2025-08-07 15:41:24 - utils.file_utils - INFO - load_parking_spots:77 - 📖 Loading parking spots from: config/parking_spots.json
+2025-08-07 15:41:24 - utils.file_utils - INFO - load_parking_spots:105 - ✅ Loaded 6 valid parking spots
+2025-08-07 15:41:24 - root - INFO - main:66 - ✅ Loaded 6 parking spots
+2025-08-07 15:41:24 - root - INFO - main:69 - 🔄 Initializing Enhanced Parking Monitor...
+2025-08-07 15:41:24 - root - ERROR - main:76 - ❌ Initialization failed: ParkingSpot.__init__() got an unexpected keyword argument 'capacity'
+2025-08-07 15:46:36 - root - INFO - setup_logging:119 - ============================================================
+2025-08-07 15:46:36 - root - INFO - setup_logging:120 - 🚀 ENHANCED PARKING SYSTEM - LOGGING INITIALIZED
+2025-08-07 15:46:36 - root - INFO - setup_logging:121 - ============================================================
+2025-08-07 15:46:36 - root - INFO - setup_logging:122 - 📝 Log Level: INFO
+2025-08-07 15:46:36 - root - INFO - setup_logging:123 - 📁 Log File: logs/parking_system_20250807.log
+2025-08-07 15:46:36 - root - INFO - setup_logging:124 - 🎨 Color Output: Enabled
+2025-08-07 15:46:36 - root - INFO - setup_logging:125 - 🔄 File Rotation: 10.0MB, 5 backups
+2025-08-07 15:46:38 - utils.file_utils - INFO - ensure_directories:40 - ✅ Ensured 9 directories exist
+2025-08-07 15:46:38 - root - INFO - main:59 - 🔄 Loading YOLO models...
+2025-08-07 15:46:38 - detection.model_loader - INFO - _get_optimal_device:42 - 🔥 CUDA available - GPU: NVIDIA GeForce GTX 1650 (4.0GB)
+2025-08-07 15:46:38 - detection.model_loader - WARNING - _get_optimal_device:48 - ⚠️ GPU memory insufficient (4.0GB), using CPU
+2025-08-07 15:46:38 - detection.model_loader - INFO - __init__:33 - 🔧 ModelManager initialized - Device: cpu
+2025-08-07 15:46:38 - detection.model_loader - INFO - __init__:34 -    Half precision: True
+2025-08-07 15:46:38 - detection.model_loader - INFO - __init__:35 -    Model compilation: True
+2025-08-07 15:46:38 - detection.model_loader - INFO - load_all_models:224 - 🚀 Loading all detection models...
+2025-08-07 15:46:38 - detection.model_loader - INFO - load_vehicle_model:105 - 🔄 Loading vehicle detection model from model\yolo11s.pt
+2025-08-07 15:46:38 - detection.model_loader - INFO - _optimize_model:170 - 🔧 Compiling vehicle model for optimization
+2025-08-07 15:46:41 - detection.model_loader - INFO - _warmup_model:191 - 🔥 Warming up vehicle model...
+2025-08-07 15:47:00 - detection.model_loader - WARNING - _warmup_model:219 - ⚠️ Model warmup failed for vehicle: RuntimeError: Compiler: cl is not found.
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+2025-08-07 15:47:00 - detection.model_loader - INFO - load_vehicle_model:117 - ✅ Vehicle detection model loaded and optimized
+2025-08-07 15:47:00 - detection.model_loader - INFO - load_plate_model:141 - 🔄 Loading license plate detection model from model\license-plate-finetune-v1m.pt
+2025-08-07 15:47:01 - detection.model_loader - INFO - _optimize_model:170 - 🔧 Compiling plate model for optimization
+2025-08-07 15:47:01 - detection.model_loader - INFO - _warmup_model:191 - 🔥 Warming up plate model...
+2025-08-07 15:47:46 - detection.model_loader - WARNING - _warmup_model:219 - ⚠️ Model warmup failed for plate: RuntimeError: Compiler: cl is not found.
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+2025-08-07 15:47:46 - detection.model_loader - INFO - load_plate_model:153 - ✅ License plate detection model loaded and optimized
+2025-08-07 15:47:46 - detection.model_loader - INFO - _log_model_info:260 - 📊 Vehicle Model Info:
+2025-08-07 15:47:46 - detection.model_loader - INFO - _log_model_info:262 -    name: vehicle
+2025-08-07 15:47:46 - detection.model_loader - INFO - _log_model_info:262 -    device: cpu
+2025-08-07 15:47:46 - detection.model_loader - INFO - _log_model_info:262 -    dtype: torch.float32
+2025-08-07 15:47:46 - detection.model_loader - INFO - _log_model_info:262 -    num_classes: 80
+2025-08-07 15:47:46 - detection.model_loader - INFO - _log_model_info:262 -    input_size: unknown
+2025-08-07 15:47:46 - detection.model_loader - INFO - _log_model_info:267 -    GPU Memory: 0.0MB allocated
+2025-08-07 15:47:46 - detection.model_loader - INFO - _log_model_info:260 - 📊 Plate Model Info:
+2025-08-07 15:47:46 - detection.model_loader - INFO - _log_model_info:262 -    name: plate
+2025-08-07 15:47:46 - detection.model_loader - INFO - _log_model_info:262 -    device: cpu
+2025-08-07 15:47:46 - detection.model_loader - INFO - _log_model_info:262 -    dtype: torch.float32
+2025-08-07 15:47:46 - detection.model_loader - INFO - _log_model_info:262 -    num_classes: 1
+2025-08-07 15:47:46 - detection.model_loader - INFO - _log_model_info:262 -    input_size: unknown
+2025-08-07 15:47:46 - detection.model_loader - INFO - _log_model_info:267 -    GPU Memory: 0.0MB allocated
+2025-08-07 15:47:46 - detection.model_loader - INFO - load_all_models:241 - ✅ All models loaded successfully
+2025-08-07 15:47:46 - root - INFO - main:61 - ✅ Models loaded successfully
+2025-08-07 15:47:46 - root - INFO - main:64 - 🔄 Loading parking spots configuration...
+2025-08-07 15:47:46 - utils.file_utils - INFO - load_parking_spots:77 - 📖 Loading parking spots from: config/parking_spots.json
+2025-08-07 15:47:46 - utils.file_utils - INFO - load_parking_spots:105 - ✅ Loaded 6 valid parking spots
+2025-08-07 15:47:46 - root - INFO - main:66 - ✅ Loaded 6 parking spots
+2025-08-07 15:47:46 - root - INFO - main:69 - 🔄 Initializing Enhanced Parking Monitor...
+2025-08-07 15:47:46 - root - ERROR - main:76 - ❌ Initialization failed: ParkingSpot.__init__() got an unexpected keyword argument 'capacity'
