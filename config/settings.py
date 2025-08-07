@@ -6,6 +6,7 @@ Cấu hình toàn cục cho hệ thống parking
 import os
 from dataclasses import dataclass
 from typing import Tuple, Optional
+from ultralytics import YOLO
 
 @dataclass
 class EnhancedConfig:
@@ -16,8 +17,8 @@ class EnhancedConfig:
     LOCATION_NAME: str = "Bãi đỗ xe tầng 1"
     
     # Model Paths
-    VEHICLE_MODEL_PATH: str = r"C:\Users\nam\runs\detect\train3\weights\best.pt"
-    PLATE_MODEL_PATH: str = r"G:\bkstar\parking AI\dataset\license-plate-finetune-v1m.pt"
+    VEHICLE_MODEL_PATH: str = "model\yolo11s.pt"
+    PLATE_MODEL_PATH: str = "model\license-plate-finetune-v1m.pt"
     ESRGAN_MODEL_PATH: str = "weights/RealESRGAN_x4plus.pth"
     
     # Server Connection
