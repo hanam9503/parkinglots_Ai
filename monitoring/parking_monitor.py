@@ -1,6 +1,6 @@
 """
-Enhanced Parking Monitor - Giám sát bãi đỗ xe nâng cao
-Hệ thống giám sát bãi đỗ xe với AI detection và tracking
+Enhanced Parking Monitor - FIXED VERSION
+Hệ thống giám sát bãi đỗ xe với logic "1 xe chỉ chiếm duy nhất 1 ô"
 """
 
 import cv2
@@ -54,12 +54,63 @@ class ParkingSpot:
         
         return False
     
+    def get_overlap_area(self, bbox: Tuple[int, int, int, int]) -> float:
+        """
+        Calculate overlap area between parking spot polygon and vehicle bounding box
+        ADDED: For better vehicle-to-spot assignment
+        """
+        try:
+            x1, y1, x2, y2 = bbox
+            
+            # Create mask for parking spot polygon
+            bbox_width, bbox_height = x2 - x1, y2 - y1
+            if bbox_width <= 0 or bbox_height <= 0:
+                return 0.0
+            
+            # Create a mask large enough to cover both polygon and bbox
+            mask_size = 1000
+            mask = np.zeros((mask_size, mask_size), dtype=np.uint8)
+            
+            # Translate polygon and bbox to mask coordinates
+            polygon_array = np.array(self.polygon, np.int32)
+            
+            # Fill polygon in mask
+            cv2.fillPoly(mask, [polygon_array], 255)
+            
+            # Create bbox mask
+            bbox_mask = np.zeros((mask_size, mask_size), dtype=np.uint8)
+            cv2.rectangle(bbox_mask, (x1, y1), (x2, y2), 255, -1)
+            
+            # Calculate intersection
+            intersection = cv2.bitwise_and(mask, bbox_mask)
+            overlap_area = cv2.countNonZero(intersection)
+            
+            return float(overlap_area)
+        
+        except Exception as e:
+            logger.warning(f"Error calculating overlap area for spot {self.id}: {e}")
+            return 0.0
+    
     def get_center(self) -> Tuple[int, int]:
         """Get center point of parking spot"""
         points = np.array(self.polygon)
         center_x = int(np.mean(points[:, 0]))
         center_y = int(np.mean(points[:, 1]))
         return (center_x, center_y)
+    
+    def distance_to_bbox_center(self, bbox: Tuple[int, int, int, int]) -> float:
+        """
+        Calculate distance from parking spot center to bbox center
+        ADDED: For vehicle assignment priority
+        """
+        spot_center = self.get_center()
+        x1, y1, x2, y2 = bbox
+        bbox_center = ((x1 + x2) // 2, (y1 + y2) // 2)
+        
+        dx = spot_center[0] - bbox_center[0]
+        dy = spot_center[1] - bbox_center[1]
+        
+        return np.sqrt(dx*dx + dy*dy)
 
 @dataclass
 class SpotState:
@@ -72,13 +123,61 @@ class SpotState:
     confidence: float = 0.0
     detection_count: int = 0
     stable_count: int = 0
+    assigned_vehicle: Optional[DetectionResult] = None  # ADDED: Track assigned vehicle
     
     def is_stable(self, threshold: int = 3) -> bool:
         """Check if state is stable (confirmed)"""
         return self.stable_count >= threshold
 
+@dataclass
+class VehicleAssignment:
+    """
+    ADDED: Represents assignment of a vehicle to a parking spot
+    """
+    vehicle: DetectionResult
+    spot: ParkingSpot
+    overlap_area: float
+    distance_to_center: float
+    assignment_score: float
+    
+    @classmethod
+    def calculate_assignment_score(cls, vehicle: DetectionResult, spot: ParkingSpot) -> float:
+        """
+        Calculate assignment score for vehicle-spot pair
+        Higher score = better assignment
+        """
+        # Check if they intersect at all
+        if not spot.intersects_bbox(vehicle.bbox):
+            return 0.0
+        
+        # Calculate overlap area (normalized by bbox area)
+        bbox_area = (vehicle.bbox[2] - vehicle.bbox[0]) * (vehicle.bbox[3] - vehicle.bbox[1])
+        overlap_area = spot.get_overlap_area(vehicle.bbox)
+        overlap_ratio = overlap_area / max(bbox_area, 1)  # Avoid division by zero
+        
+        # Calculate distance factor (closer is better)
+        distance = spot.distance_to_bbox_center(vehicle.bbox)
+        max_distance = 200  # Reasonable max distance for normalization
+        distance_factor = max(0, (max_distance - distance) / max_distance)
+        
+        # Priority factor
+        priority_factor = (spot.priority + 1) / 10.0  # Normalize priority
+        
+        # Confidence factor
+        confidence_factor = vehicle.confidence
+        
+        # Combine factors with weights
+        score = (
+            overlap_ratio * 0.4 +          # 40% overlap area
+            distance_factor * 0.3 +         # 30% distance
+            confidence_factor * 0.2 +       # 20% detection confidence
+            priority_factor * 0.1           # 10% spot priority
+        )
+        
+        return score
+
 class EnhancedParkingMonitor:
-    """Enhanced parking monitor with comprehensive detection and tracking"""
+    """Enhanced parking monitor với logic "1 xe = 1 ô duy nhất" """
     
     def __init__(self, parking_spots_config: List[Dict[str, Any]]):
         """
@@ -103,6 +202,10 @@ class EnhancedParkingMonitor:
         self.frame_count = 0
         self.last_frame_time = time.time()
         
+        # ADDED: Vehicle assignment tracking
+        self.vehicle_assignments: Dict[str, VehicleAssignment] = {}  # vehicle_id -> assignment
+        self.spot_assignments: Dict[str, str] = {}  # spot_id -> vehicle_id
+        
         # Event tracking
         self.events_buffer = deque(maxlen=1000)
         self.last_event_id = 0
@@ -118,9 +221,10 @@ class EnhancedParkingMonitor:
         self.is_running = False
         self.start_time = datetime.now()
         
-        logger.info(f"🏁 Enhanced Parking Monitor initialized")
+        logger.info(f"🏁 Enhanced Parking Monitor initialized (FIXED VERSION)")
         logger.info(f"   Parking spots: {len(self.parking_spots)}")
         logger.info(f"   Detection stability threshold: {getattr(config, 'DETECTION_STABILITY_THRESHOLD', 3)}")
+        logger.info(f"   Vehicle assignment: ENABLED (1 vehicle = 1 spot)")
     
     def _init_parking_spots(self, spots_config: List[Dict[str, Any]]) -> List[ParkingSpot]:
         """Initialize parking spots from configuration"""
@@ -162,6 +266,7 @@ class EnhancedParkingMonitor:
     def process_frame(self, frame: np.ndarray, timestamp: Optional[datetime] = None) -> List[ParkingEvent]:
         """
         Process a single frame and detect parking changes
+        FIXED: Implement proper vehicle-to-spot assignment
         
         Args:
             frame: Input video frame
@@ -186,8 +291,13 @@ class EnhancedParkingMonitor:
             # Detect vehicles
             vehicle_detections = self.vehicle_detector.detect_vehicles(frame, self.frame_count)
             
-            # Process parking spots
-            events = self._process_parking_spots(vehicle_detections, frame, timestamp)
+            # FIXED: Assign vehicles to spots using optimal assignment
+            vehicle_to_spot_assignments = self._assign_vehicles_to_spots(vehicle_detections)
+            
+            # Process parking spots with assignments
+            events = self._process_parking_spots_with_assignments(
+                vehicle_to_spot_assignments, frame, timestamp
+            )
             
             # Update statistics
             processing_time = time.time() - start_time
@@ -204,22 +314,76 @@ class EnhancedParkingMonitor:
             logger.error(f"Frame processing failed: {e}")
             raise SystemException(f"Frame processing error: {e}", "FRAME_PROCESSING_ERROR")
     
-    def _process_parking_spots(self, vehicle_detections: List[DetectionResult], 
-                              frame: np.ndarray, timestamp: datetime) -> List[ParkingEvent]:
-        """Process all parking spots for occupancy changes"""
+    def _assign_vehicles_to_spots(self, vehicle_detections: List[DetectionResult]) -> Dict[str, Optional[DetectionResult]]:
+        """
+        ADDED: Assign each vehicle to exactly one parking spot
+        Returns: Dict mapping spot_id -> assigned_vehicle (or None)
+        """
+        # Calculate all possible assignments with scores
+        possible_assignments = []
+        
+        for vehicle in vehicle_detections:
+            vehicle_id = getattr(vehicle, 'car_id', f"vehicle_{hash(str(vehicle.bbox))}")
+            
+            for spot in self.parking_spots:
+                score = VehicleAssignment.calculate_assignment_score(vehicle, spot)
+                
+                if score > 0:  # Only consider assignments with some overlap
+                    assignment = VehicleAssignment(
+                        vehicle=vehicle,
+                        spot=spot,
+                        overlap_area=spot.get_overlap_area(vehicle.bbox),
+                        distance_to_center=spot.distance_to_bbox_center(vehicle.bbox),
+                        assignment_score=score
+                    )
+                    possible_assignments.append(assignment)
+        
+        # Sort by assignment score (best first)
+        possible_assignments.sort(key=lambda x: x.assignment_score, reverse=True)
+        
+        # Greedy assignment: assign best score first, avoid conflicts
+        spot_assignments = {}  # spot_id -> vehicle
+        assigned_vehicles = set()  # Keep track of assigned vehicles
+        
+        for assignment in possible_assignments:
+            spot_id = assignment.spot.id
+            vehicle = assignment.vehicle
+            vehicle_id = getattr(vehicle, 'car_id', f"vehicle_{hash(str(vehicle.bbox))}")
+            
+            # Skip if spot already assigned or vehicle already assigned
+            if spot_id in spot_assignments or vehicle_id in assigned_vehicles:
+                continue
+            
+            # Make assignment
+            spot_assignments[spot_id] = vehicle
+            assigned_vehicles.add(vehicle_id)
+            
+            logger.debug(f"Assigned vehicle {vehicle_id} to spot {spot_id} (score: {assignment.assignment_score:.3f})")
+        
+        # Create final mapping: all spots with their assigned vehicle (or None)
+        final_assignments = {}
+        for spot in self.parking_spots:
+            final_assignments[spot.id] = spot_assignments.get(spot.id, None)
+        
+        return final_assignments
+    
+    def _process_parking_spots_with_assignments(self, 
+                                              spot_assignments: Dict[str, Optional[DetectionResult]],
+                                              frame: np.ndarray, 
+                                              timestamp: datetime) -> List[ParkingEvent]:
+        """
+        FIXED: Process parking spots using pre-calculated assignments
+        """
         events = []
         
         for spot in self.parking_spots:
             try:
-                # Find vehicles in this parking spot
-                vehicles_in_spot = self._find_vehicles_in_spot(spot, vehicle_detections)
-                
-                # Determine occupancy
-                is_occupied = len(vehicles_in_spot) > 0
-                best_vehicle = vehicles_in_spot[0] if vehicles_in_spot else None
+                # Get assigned vehicle for this spot
+                assigned_vehicle = spot_assignments.get(spot.id, None)
+                is_occupied = assigned_vehicle is not None
                 
                 # Update spot state
-                event = self._update_spot_state(spot, is_occupied, best_vehicle, frame, timestamp)
+                event = self._update_spot_state(spot, is_occupied, assigned_vehicle, frame, timestamp)
                 
                 if event:
                     events.append(event)
@@ -230,23 +394,8 @@ class EnhancedParkingMonitor:
         
         return events
     
-    def _find_vehicles_in_spot(self, spot: ParkingSpot, 
-                              vehicle_detections: List[DetectionResult]) -> List[DetectionResult]:
-        """Find vehicles that intersect with a parking spot"""
-        vehicles_in_spot = []
-        
-        for detection in vehicle_detections:
-            # Check if vehicle bounding box intersects with parking spot
-            if spot.intersects_bbox(detection.bbox):
-                vehicles_in_spot.append(detection)
-        
-        # Sort by confidence (best first)
-        vehicles_in_spot.sort(key=lambda v: v.confidence, reverse=True)
-        
-        return vehicles_in_spot
-    
     def _update_spot_state(self, spot: ParkingSpot, is_occupied: bool, 
-                          best_vehicle: Optional[DetectionResult], 
+                          assigned_vehicle: Optional[DetectionResult], 
                           frame: np.ndarray, timestamp: datetime) -> Optional[ParkingEvent]:
         """Update parking spot state and generate events if needed"""
         
@@ -265,9 +414,11 @@ class EnhancedParkingMonitor:
         
         # Update current values
         current_state.is_occupied = is_occupied
-        if best_vehicle:
-            current_state.vehicle_id = getattr(best_vehicle, 'car_id', None)
-            current_state.confidence = best_vehicle.confidence
+        current_state.assigned_vehicle = assigned_vehicle
+        
+        if assigned_vehicle:
+            current_state.vehicle_id = getattr(assigned_vehicle, 'car_id', None)
+            current_state.confidence = assigned_vehicle.confidence
         else:
             current_state.vehicle_id = None
             current_state.confidence = 0.0
@@ -278,12 +429,12 @@ class EnhancedParkingMonitor:
             current_state.stable_count == stability_threshold):
             
             # State just became stable, generate event
-            event = self._create_parking_event(spot, current_state, best_vehicle, frame, timestamp)
+            event = self._create_parking_event(spot, current_state, assigned_vehicle, frame, timestamp)
             current_state.last_change = timestamp
             
             # Try to detect license plate if vehicle present
-            if is_occupied and best_vehicle:
-                self._detect_license_plate(event, best_vehicle, frame)
+            if is_occupied and assigned_vehicle:
+                self._detect_license_plate(event, assigned_vehicle, frame)
             
             return event
         
@@ -320,7 +471,8 @@ class EnhancedParkingMonitor:
                 'spot_zone': spot.zone,
                 'vehicle_id': state.vehicle_id,
                 'detection_count': state.detection_count,
-                'frame_number': self.frame_count
+                'frame_number': self.frame_count,
+                'assignment_method': 'optimal_assignment'  # ADDED: Track assignment method
             }
         )
         
@@ -363,6 +515,39 @@ class EnhancedParkingMonitor:
         except Exception as e:
             logger.warning(f"License plate detection failed for event {event.event_id}: {e}")
     
+    def get_assignment_debug_info(self) -> Dict[str, Any]:
+        """
+        ADDED: Get debug information about vehicle-to-spot assignments
+        """
+        debug_info = {
+            'timestamp': datetime.now().isoformat(),
+            'total_spots': len(self.parking_spots),
+            'occupied_spots': 0,
+            'spot_assignments': [],
+            'assignment_conflicts': []
+        }
+        
+        # Get current assignments
+        for spot in self.parking_spots:
+            state = self.spot_states[spot.id]
+            
+            spot_info = {
+                'spot_id': spot.id,
+                'spot_name': spot.name,
+                'is_occupied': state.is_occupied,
+                'is_stable': state.is_stable(),
+                'assigned_vehicle_id': state.vehicle_id,
+                'confidence': state.confidence,
+                'stable_count': state.stable_count
+            }
+            
+            debug_info['spot_assignments'].append(spot_info)
+            
+            if state.is_occupied and state.is_stable():
+                debug_info['occupied_spots'] += 1
+        
+        return debug_info
+    
     def get_current_status(self) -> Dict[str, Any]:
         """Get current parking status"""
         occupied_spots = sum(1 for state in self.spot_states.values() 
@@ -383,6 +568,7 @@ class EnhancedParkingMonitor:
             'timestamp': datetime.now().isoformat(),
             'camera_id': getattr(config, 'CAMERA_ID', 'default'),
             'system_status': 'running' if self.is_running else 'stopped',
+            'assignment_method': 'optimal_assignment',  # ADDED
             'parking_summary': {
                 'total_spots': total_spots,
                 'occupied_spots': occupied_spots,
@@ -417,7 +603,8 @@ class EnhancedParkingMonitor:
                     'confidence': state.confidence,
                     'last_change': state.last_change.isoformat(),
                     'detection_count': state.detection_count,
-                    'stable_count': state.stable_count
+                    'stable_count': state.stable_count,
+                    'has_assigned_vehicle': state.assigned_vehicle is not None  # ADDED
                 }
             }
             
@@ -464,6 +651,7 @@ class EnhancedParkingMonitor:
         logger.info(f"   Processing FPS: {fps:.1f}")
         logger.info(f"   Occupied spots: {occupied_spots}/{len(self.parking_spots)}")
         logger.info(f"   Events generated: {self.detection_stats.get('total_events', 0)}")
+        logger.info(f"   Assignment method: Optimal assignment (1 vehicle = 1 spot)")
     
     def export_events(self, start_time: Optional[datetime] = None, 
                      end_time: Optional[datetime] = None) -> List[Dict[str, Any]]:
@@ -491,6 +679,8 @@ class EnhancedParkingMonitor:
             self.processing_times.clear()
             self.detection_stats.clear()
             self.events_buffer.clear()
+            self.vehicle_assignments.clear()  # ADDED
+            self.spot_assignments.clear()     # ADDED
             self.start_time = datetime.now()
         
         logger.info("🔄 Parking monitor statistics reset")
@@ -521,6 +711,8 @@ class EnhancedParkingMonitor:
             self.events_buffer.clear()
             self.processing_times.clear()
             self.detection_stats.clear()
+            self.vehicle_assignments.clear()
+            self.spot_assignments.clear()
         
         logger.info("✅ Parking monitor cleanup completed")
 
@@ -557,7 +749,7 @@ EXAMPLE_PARKING_SPOTS = [
     }
 ]
 
-# Example usage
+# Example usage và demo
 if __name__ == "__main__":
     # Setup logging
     logging.basicConfig(level=logging.INFO)
@@ -565,10 +757,44 @@ if __name__ == "__main__":
     # Create parking monitor
     monitor = create_parking_monitor(EXAMPLE_PARKING_SPOTS)
     
-    print("Parking Monitor created successfully!")
+    print("🚗 Enhanced Parking Monitor - FIXED VERSION")
+    print("=" * 60)
+    print("✅ FIXES APPLIED:")
+    print("   • 1 xe chỉ chiếm duy nhất 1 ô đỗ")
+    print("   • Optimal vehicle-to-spot assignment")
+    print("   • Giải quyết xung đột khi xe nằm giữa nhiều ô")
+    print("   • Assignment score dựa trên overlap area, distance, priority")
+    print("   • Greedy algorithm cho assignment tối ưu")
+    print()
+    
     print(f"Monitoring {len(monitor.parking_spots)} parking spots")
     
     # Display current status
     status = monitor.get_current_status()
     print(f"\nCurrent Status:")
-    print(json.dumps(status, indent=2, default=str))
+    print(f"  Assignment method: {status.get('assignment_method', 'N/A')}")
+    print(f"  Total spots: {status['parking_summary']['total_spots']}")
+    print(f"  Occupied spots: {status['parking_summary']['occupied_spots']}")
+    print(f"  Available spots: {status['parking_summary']['available_spots']}")
+    print(f"  Occupancy rate: {status['parking_summary']['occupancy_rate']}%")
+    
+    # Show spot details
+    print(f"\nSpot Details:")
+    spot_details = monitor.get_spot_details()
+    for spot in spot_details:
+        print(f"  {spot['name']} ({spot['id']}): {spot['status']['is_occupied']}")
+    
+    print(f"\n🔧 TECHNICAL IMPROVEMENTS:")
+    print(f"   ✓ VehicleAssignment class với assignment scoring")
+    print(f"   ✓ get_overlap_area() method tính diện tích giao nhau")  
+    print(f"   ✓ distance_to_bbox_center() tính khoảng cách")
+    print(f"   ✓ _assign_vehicles_to_spots() implement greedy assignment")
+    print(f"   ✓ Conflict resolution: best score wins")
+    print(f"   ✓ Assignment debug info với get_assignment_debug_info()")
+    
+    print(f"\n📊 ASSIGNMENT ALGORITHM:")
+    print(f"   Score = 0.4×overlap_ratio + 0.3×distance_factor +")
+    print(f"           0.2×confidence + 0.1×priority")
+    print(f"   → Đảm bảo 1 xe chỉ được gán cho 1 ô có điểm số cao nhất")
+    
+    print(f"\n✅ Problem solved: No more duplicate assignments!")

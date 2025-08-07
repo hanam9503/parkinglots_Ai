@@ -846,3 +846,354 @@ Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especiall
 2025-08-07 12:55:49 - detection.plate_detector - INFO - cleanup:493 - ✅ Plate detector cleanup completed
 2025-08-07 12:55:49 - monitoring.parking_monitor - INFO - cleanup:525 - ✅ Parking monitor cleanup completed
 2025-08-07 12:55:49 - root - INFO - main:215 - 🔚 Enhanced Parking System completed
+2025-08-07 13:37:38 - root - INFO - setup_logging:119 - ============================================================
+2025-08-07 13:37:38 - root - INFO - setup_logging:120 - 🚀 ENHANCED PARKING SYSTEM - LOGGING INITIALIZED
+2025-08-07 13:37:38 - root - INFO - setup_logging:121 - ============================================================
+2025-08-07 13:37:38 - root - INFO - setup_logging:122 - 📝 Log Level: INFO
+2025-08-07 13:37:38 - root - INFO - setup_logging:123 - 📁 Log File: logs/parking_system_20250807.log
+2025-08-07 13:37:38 - root - INFO - setup_logging:124 - 🎨 Color Output: Enabled
+2025-08-07 13:37:38 - root - INFO - setup_logging:125 - 🔄 File Rotation: 10.0MB, 5 backups
+2025-08-07 13:37:40 - utils.file_utils - INFO - ensure_directories:40 - ✅ Ensured 9 directories exist
+2025-08-07 13:37:40 - root - INFO - main:59 - 🔄 Loading YOLO models...
+2025-08-07 13:37:40 - detection.model_loader - INFO - _get_optimal_device:42 - 🔥 CUDA available - GPU: NVIDIA GeForce GTX 1650 (4.0GB)
+2025-08-07 13:37:40 - detection.model_loader - WARNING - _get_optimal_device:48 - ⚠️ GPU memory insufficient (4.0GB), using CPU
+2025-08-07 13:37:40 - detection.model_loader - INFO - __init__:33 - 🔧 ModelManager initialized - Device: cpu
+2025-08-07 13:37:40 - detection.model_loader - INFO - __init__:34 -    Half precision: True
+2025-08-07 13:37:40 - detection.model_loader - INFO - __init__:35 -    Model compilation: True
+2025-08-07 13:37:40 - detection.model_loader - INFO - load_all_models:224 - 🚀 Loading all detection models...
+2025-08-07 13:37:40 - detection.model_loader - INFO - load_vehicle_model:105 - 🔄 Loading vehicle detection model from model\yolo11s.pt
+2025-08-07 13:37:40 - detection.model_loader - INFO - _optimize_model:170 - 🔧 Compiling vehicle model for optimization
+2025-08-07 13:37:44 - detection.model_loader - INFO - _warmup_model:191 - 🔥 Warming up vehicle model...
+2025-08-07 13:38:05 - detection.model_loader - WARNING - _warmup_model:219 - ⚠️ Model warmup failed for vehicle: RuntimeError: Compiler: cl is not found.
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+2025-08-07 13:38:05 - detection.model_loader - INFO - load_vehicle_model:117 - ✅ Vehicle detection model loaded and optimized
+2025-08-07 13:38:05 - detection.model_loader - INFO - load_plate_model:141 - 🔄 Loading license plate detection model from model\license-plate-finetune-v1m.pt
+2025-08-07 13:38:05 - detection.model_loader - INFO - _optimize_model:170 - 🔧 Compiling plate model for optimization
+2025-08-07 13:38:05 - detection.model_loader - INFO - _warmup_model:191 - 🔥 Warming up plate model...
+2025-08-07 13:38:45 - detection.model_loader - WARNING - _warmup_model:219 - ⚠️ Model warmup failed for plate: RuntimeError: Compiler: cl is not found.
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+2025-08-07 13:38:45 - detection.model_loader - INFO - load_plate_model:153 - ✅ License plate detection model loaded and optimized
+2025-08-07 13:38:45 - detection.model_loader - INFO - _log_model_info:260 - 📊 Vehicle Model Info:
+2025-08-07 13:38:45 - detection.model_loader - INFO - _log_model_info:262 -    name: vehicle
+2025-08-07 13:38:45 - detection.model_loader - INFO - _log_model_info:262 -    device: cpu
+2025-08-07 13:38:45 - detection.model_loader - INFO - _log_model_info:262 -    dtype: torch.float32
+2025-08-07 13:38:45 - detection.model_loader - INFO - _log_model_info:262 -    num_classes: 80
+2025-08-07 13:38:45 - detection.model_loader - INFO - _log_model_info:262 -    input_size: unknown
+2025-08-07 13:38:45 - detection.model_loader - INFO - _log_model_info:267 -    GPU Memory: 0.0MB allocated
+2025-08-07 13:38:45 - detection.model_loader - INFO - _log_model_info:260 - 📊 Plate Model Info:
+2025-08-07 13:38:45 - detection.model_loader - INFO - _log_model_info:262 -    name: plate
+2025-08-07 13:38:45 - detection.model_loader - INFO - _log_model_info:262 -    device: cpu
+2025-08-07 13:38:45 - detection.model_loader - INFO - _log_model_info:262 -    dtype: torch.float32
+2025-08-07 13:38:45 - detection.model_loader - INFO - _log_model_info:262 -    num_classes: 1
+2025-08-07 13:38:45 - detection.model_loader - INFO - _log_model_info:262 -    input_size: unknown
+2025-08-07 13:38:45 - detection.model_loader - INFO - _log_model_info:267 -    GPU Memory: 0.0MB allocated
+2025-08-07 13:38:45 - detection.model_loader - INFO - load_all_models:241 - ✅ All models loaded successfully
+2025-08-07 13:38:45 - root - INFO - main:61 - ✅ Models loaded successfully
+2025-08-07 13:38:45 - root - INFO - main:64 - 🔄 Loading parking spots configuration...
+2025-08-07 13:38:45 - utils.file_utils - INFO - load_parking_spots:77 - 📖 Loading parking spots from: config/parking_spots.json
+2025-08-07 13:38:45 - utils.file_utils - INFO - load_parking_spots:105 - ✅ Loaded 6 valid parking spots
+2025-08-07 13:38:45 - root - INFO - main:66 - ✅ Loaded 6 parking spots
+2025-08-07 13:38:45 - root - INFO - main:69 - 🔄 Initializing Enhanced Parking Monitor...
+2025-08-07 13:38:45 - monitoring.parking_monitor - INFO - __init__:121 - 🏁 Enhanced Parking Monitor initialized
+2025-08-07 13:38:45 - monitoring.parking_monitor - INFO - __init__:122 -    Parking spots: 6
+2025-08-07 13:38:45 - monitoring.parking_monitor - INFO - __init__:123 -    Detection stability threshold: 3
+2025-08-07 13:38:45 - detection.vehicle_detector - INFO - __init__:79 - 🚗 Enhanced Vehicle Detector initialized
+2025-08-07 13:38:45 - detection.vehicle_detector - INFO - __init__:80 -    Device: cpu
+2025-08-07 13:38:45 - detection.vehicle_detector - INFO - __init__:81 -    Confidence threshold: 0.6
+2025-08-07 13:38:45 - detection.vehicle_detector - INFO - __init__:82 -    Image size: 640
+2025-08-07 13:38:45 - detection.vehicle_detector - INFO - __init__:83 -    Supported classes: ['car', 'motorcycle', 'bus', 'truck']
+2025-08-07 13:38:45 - detection.plate_detector - INFO - __init__:69 - 🔢 Enhanced Plate Detector initialized
+2025-08-07 13:38:45 - detection.plate_detector - INFO - __init__:70 -    Device: cpu
+2025-08-07 13:38:45 - detection.plate_detector - INFO - __init__:71 -    Confidence threshold: 0.4
+2025-08-07 13:38:45 - detection.plate_detector - INFO - __init__:72 -    Image size: 416
+2025-08-07 13:38:45 - detection.plate_detector - INFO - __init__:73 -    Plate area range: 100-50000 pixels
+2025-08-07 13:38:45 - detection.plate_detector - INFO - __init__:74 -    Aspect ratio range: 0.5-5.0
+2025-08-07 13:38:45 - monitoring.parking_monitor - INFO - initialize_models:156 - ✅ Detection models initialized successfully
+2025-08-07 13:38:45 - monitoring.parking_monitor - INFO - start_monitoring:501 - 🚀 Parking monitoring started
+2025-08-07 13:38:45 - root - INFO - main:73 - ✅ Monitor initialized successfully
+2025-08-07 13:38:45 - root - INFO - main:98 - 🎬 Video info: 926 frames, 30.0 FPS, 30.9s duration
+2025-08-07 13:38:45 - root - INFO - main:110 - 🚀 Starting Enhanced Parking System...
+2025-08-07 13:38:47 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A1: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:38:47 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A2: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:38:47 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A3: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:38:47 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A4: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:38:47 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A5: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:38:47 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A6: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:38:53 - root - INFO - main:148 - ⚡ FPS: 3.9 | Occupancy: 0.0% | Occupied: 0/6 | Events: 0
+2025-08-07 13:38:55 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A1: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:38:55 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A2: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:39:01 - root - INFO - main:148 - ⚡ FPS: 4.0 | Occupancy: 33.3% | Occupied: 2/6 | Events: 0
+2025-08-07 13:39:08 - root - INFO - main:148 - ⚡ FPS: 4.1 | Occupancy: 33.3% | Occupied: 2/6 | Events: 0
+2025-08-07 13:39:10 - detection.vehicle_detector - INFO - _log_performance_stats:412 - 🚗 Vehicle Detection Performance (last 100 frames):
+2025-08-07 13:39:10 - detection.vehicle_detector - INFO - _log_performance_stats:413 -    Average time: 214.2ms
+2025-08-07 13:39:10 - detection.vehicle_detector - INFO - _log_performance_stats:414 -    Min/Max time: 163.1/903.7ms
+2025-08-07 13:39:10 - detection.vehicle_detector - INFO - _log_performance_stats:415 -    FPS: 4.7
+2025-08-07 13:39:10 - detection.vehicle_detector - INFO - _log_performance_stats:416 -    Active tracks: 3
+2025-08-07 13:39:10 - detection.vehicle_detector - INFO - _log_performance_stats:417 -    Avg detections/frame: 1.8
+2025-08-07 13:39:10 - monitoring.parking_monitor - INFO - _log_performance_stats:462 - 🏁 Parking Monitor Performance (last 100 frames):
+2025-08-07 13:39:10 - monitoring.parking_monitor - INFO - _log_performance_stats:463 -    Processing time: 214.4ms avg, 903.7ms max
+2025-08-07 13:39:10 - monitoring.parking_monitor - INFO - _log_performance_stats:464 -    Processing FPS: 4.7
+2025-08-07 13:39:10 - monitoring.parking_monitor - INFO - _log_performance_stats:465 -    Occupied spots: 2/6
+2025-08-07 13:39:10 - monitoring.parking_monitor - INFO - _log_performance_stats:466 -    Events generated: 0
+2025-08-07 13:39:13 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A1: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:39:13 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A2: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:39:15 - root - INFO - main:148 - ⚡ FPS: 4.0 | Occupancy: 0.0% | Occupied: 0/6 | Events: 0
+2025-08-07 13:39:16 - root - INFO - main:158 - 📊 System Summary:
+2025-08-07 13:39:16 - root - INFO - main:159 -    - Occupancy: 0.0% (0/6)
+2025-08-07 13:39:16 - root - INFO - main:161 -    - Processing: Frames=122, Events=0
+2025-08-07 13:39:16 - root - INFO - main:163 -    - Performance: 4.8 FPS, 209.4ms avg
+2025-08-07 13:39:22 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A4: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:39:22 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A5: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:39:22 - root - INFO - main:148 - ⚡ FPS: 4.1 | Occupancy: 33.3% | Occupied: 2/6 | Events: 0
+2025-08-07 13:39:29 - root - INFO - main:148 - ⚡ FPS: 4.2 | Occupancy: 33.3% | Occupied: 2/6 | Events: 0
+2025-08-07 13:39:34 - detection.vehicle_detector - INFO - _log_performance_stats:412 - 🚗 Vehicle Detection Performance (last 100 frames):
+2025-08-07 13:39:34 - detection.vehicle_detector - INFO - _log_performance_stats:413 -    Average time: 203.8ms
+2025-08-07 13:39:34 - detection.vehicle_detector - INFO - _log_performance_stats:414 -    Min/Max time: 161.5/280.1ms
+2025-08-07 13:39:34 - detection.vehicle_detector - INFO - _log_performance_stats:415 -    FPS: 4.9
+2025-08-07 13:39:34 - detection.vehicle_detector - INFO - _log_performance_stats:416 -    Active tracks: 1
+2025-08-07 13:39:34 - detection.vehicle_detector - INFO - _log_performance_stats:417 -    Avg detections/frame: 1.5
+2025-08-07 13:39:34 - monitoring.parking_monitor - INFO - _log_performance_stats:462 - 🏁 Parking Monitor Performance (last 100 frames):
+2025-08-07 13:39:34 - monitoring.parking_monitor - INFO - _log_performance_stats:463 -    Processing time: 204.1ms avg, 280.1ms max
+2025-08-07 13:39:34 - monitoring.parking_monitor - INFO - _log_performance_stats:464 -    Processing FPS: 4.9
+2025-08-07 13:39:34 - monitoring.parking_monitor - INFO - _log_performance_stats:465 -    Occupied spots: 2/6
+2025-08-07 13:39:34 - monitoring.parking_monitor - INFO - _log_performance_stats:466 -    Events generated: 0
+2025-08-07 13:39:37 - root - INFO - main:148 - ⚡ FPS: 4.1 | Occupancy: 33.3% | Occupied: 2/6 | Events: 0
+2025-08-07 13:39:41 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A4: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:39:41 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A5: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:39:45 - root - INFO - main:148 - ⚡ FPS: 4.1 | Occupancy: 0.0% | Occupied: 0/6 | Events: 0
+2025-08-07 13:39:46 - root - INFO - main:158 - 📊 System Summary:
+2025-08-07 13:39:46 - root - INFO - main:159 -    - Occupancy: 0.0% (0/6)
+2025-08-07 13:39:46 - root - INFO - main:161 -    - Processing: Frames=245, Events=0
+2025-08-07 13:39:46 - root - INFO - main:163 -    - Performance: 4.7 FPS, 211.4ms avg
+2025-08-07 13:39:49 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A5: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:39:49 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A6: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:39:52 - root - INFO - main:148 - ⚡ FPS: 4.1 | Occupancy: 33.3% | Occupied: 2/6 | Events: 0
+2025-08-07 13:39:59 - detection.vehicle_detector - INFO - _log_performance_stats:412 - 🚗 Vehicle Detection Performance (last 100 frames):
+2025-08-07 13:39:59 - detection.vehicle_detector - INFO - _log_performance_stats:413 -    Average time: 213.3ms
+2025-08-07 13:39:59 - detection.vehicle_detector - INFO - _log_performance_stats:414 -    Min/Max time: 158.1/305.9ms
+2025-08-07 13:39:59 - detection.vehicle_detector - INFO - _log_performance_stats:415 -    FPS: 4.7
+2025-08-07 13:39:59 - detection.vehicle_detector - INFO - _log_performance_stats:416 -    Active tracks: 1
+2025-08-07 13:39:59 - detection.vehicle_detector - INFO - _log_performance_stats:417 -    Avg detections/frame: 1.2
+2025-08-07 13:39:59 - monitoring.parking_monitor - INFO - _log_performance_stats:462 - 🏁 Parking Monitor Performance (last 100 frames):
+2025-08-07 13:39:59 - monitoring.parking_monitor - INFO - _log_performance_stats:463 -    Processing time: 213.6ms avg, 305.9ms max
+2025-08-07 13:39:59 - monitoring.parking_monitor - INFO - _log_performance_stats:464 -    Processing FPS: 4.7
+2025-08-07 13:39:59 - monitoring.parking_monitor - INFO - _log_performance_stats:465 -    Occupied spots: 2/6
+2025-08-07 13:39:59 - monitoring.parking_monitor - INFO - _log_performance_stats:466 -    Events generated: 0
+2025-08-07 13:39:59 - root - INFO - main:148 - ⚡ FPS: 4.1 | Occupancy: 33.3% | Occupied: 2/6 | Events: 0
+2025-08-07 13:40:06 - root - INFO - main:148 - ⚡ FPS: 4.1 | Occupancy: 33.3% | Occupied: 2/6 | Events: 0
+2025-08-07 13:40:07 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A5: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:40:07 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A6: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:40:13 - root - INFO - main:148 - ⚡ FPS: 4.1 | Occupancy: 0.0% | Occupied: 0/6 | Events: 0
+2025-08-07 13:40:15 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A3: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:40:16 - root - INFO - main:158 - 📊 System Summary:
+2025-08-07 13:40:16 - root - INFO - main:159 -    - Occupancy: 16.7% (1/6)
+2025-08-07 13:40:16 - root - INFO - main:161 -    - Processing: Frames=372, Events=0
+2025-08-07 13:40:16 - root - INFO - main:163 -    - Performance: 4.9 FPS, 205.7ms avg
+2025-08-07 13:40:21 - root - INFO - main:148 - ⚡ FPS: 4.1 | Occupancy: 16.7% | Occupied: 1/6 | Events: 0
+2025-08-07 13:40:23 - detection.vehicle_detector - INFO - _log_performance_stats:412 - 🚗 Vehicle Detection Performance (last 100 frames):
+2025-08-07 13:40:23 - detection.vehicle_detector - INFO - _log_performance_stats:413 -    Average time: 210.6ms
+2025-08-07 13:40:23 - detection.vehicle_detector - INFO - _log_performance_stats:414 -    Min/Max time: 162.1/281.8ms
+2025-08-07 13:40:23 - detection.vehicle_detector - INFO - _log_performance_stats:415 -    FPS: 4.7
+2025-08-07 13:40:23 - detection.vehicle_detector - INFO - _log_performance_stats:416 -    Active tracks: 1
+2025-08-07 13:40:23 - detection.vehicle_detector - INFO - _log_performance_stats:417 -    Avg detections/frame: 1.1
+2025-08-07 13:40:23 - monitoring.parking_monitor - INFO - _log_performance_stats:462 - 🏁 Parking Monitor Performance (last 100 frames):
+2025-08-07 13:40:23 - monitoring.parking_monitor - INFO - _log_performance_stats:463 -    Processing time: 210.7ms avg, 281.8ms max
+2025-08-07 13:40:23 - monitoring.parking_monitor - INFO - _log_performance_stats:464 -    Processing FPS: 4.7
+2025-08-07 13:40:23 - monitoring.parking_monitor - INFO - _log_performance_stats:465 -    Occupied spots: 1/6
+2025-08-07 13:40:23 - monitoring.parking_monitor - INFO - _log_performance_stats:466 -    Events generated: 0
+2025-08-07 13:40:28 - root - INFO - main:148 - ⚡ FPS: 4.1 | Occupancy: 16.7% | Occupied: 1/6 | Events: 0
+2025-08-07 13:40:33 - monitoring.parking_monitor - ERROR - _process_parking_spots:228 - Error processing spot A3: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:40:35 - root - INFO - main:148 - ⚡ FPS: 4.1 | Occupancy: 0.0% | Occupied: 0/6 | Events: 0
+2025-08-07 13:40:38 - root - INFO - main:116 - 📹 End of video reached
+2025-08-07 13:40:38 - root - INFO - main:208 - 🧹 Starting cleanup...
+2025-08-07 13:40:38 - monitoring.parking_monitor - INFO - cleanup:510 - 🧹 Cleaning up parking monitor...
+2025-08-07 13:40:38 - monitoring.parking_monitor - INFO - stop_monitoring:506 - ⏹️ Parking monitoring stopped
+2025-08-07 13:40:38 - detection.vehicle_detector - INFO - cleanup:460 - 🧹 Cleaning up vehicle detector...
+2025-08-07 13:40:38 - detection.vehicle_detector - INFO - cleanup:466 - ✅ Vehicle detector cleanup completed
+2025-08-07 13:40:38 - detection.plate_detector - INFO - cleanup:485 - 🧹 Cleaning up plate detector...
+2025-08-07 13:40:38 - detection.plate_detector - INFO - cleanup:493 - ✅ Plate detector cleanup completed
+2025-08-07 13:40:38 - monitoring.parking_monitor - INFO - cleanup:525 - ✅ Parking monitor cleanup completed
+2025-08-07 13:40:38 - root - INFO - main:215 - 🔚 Enhanced Parking System completed
+2025-08-07 13:58:43 - root - INFO - setup_logging:119 - ============================================================
+2025-08-07 13:58:43 - root - INFO - setup_logging:120 - 🚀 ENHANCED PARKING SYSTEM - LOGGING INITIALIZED
+2025-08-07 13:58:43 - root - INFO - setup_logging:121 - ============================================================
+2025-08-07 13:58:43 - root - INFO - setup_logging:122 - 📝 Log Level: INFO
+2025-08-07 13:58:43 - root - INFO - setup_logging:123 - 📁 Log File: logs/parking_system_20250807.log
+2025-08-07 13:58:43 - root - INFO - setup_logging:124 - 🎨 Color Output: Enabled
+2025-08-07 13:58:43 - root - INFO - setup_logging:125 - 🔄 File Rotation: 10.0MB, 5 backups
+2025-08-07 13:58:44 - utils.file_utils - INFO - ensure_directories:40 - ✅ Ensured 9 directories exist
+2025-08-07 13:58:44 - root - INFO - main:59 - 🔄 Loading YOLO models...
+2025-08-07 13:58:44 - detection.model_loader - INFO - _get_optimal_device:42 - 🔥 CUDA available - GPU: NVIDIA GeForce GTX 1650 (4.0GB)
+2025-08-07 13:58:44 - detection.model_loader - WARNING - _get_optimal_device:48 - ⚠️ GPU memory insufficient (4.0GB), using CPU
+2025-08-07 13:58:44 - detection.model_loader - INFO - __init__:33 - 🔧 ModelManager initialized - Device: cpu
+2025-08-07 13:58:44 - detection.model_loader - INFO - __init__:34 -    Half precision: True
+2025-08-07 13:58:44 - detection.model_loader - INFO - __init__:35 -    Model compilation: True
+2025-08-07 13:58:44 - detection.model_loader - INFO - load_all_models:224 - 🚀 Loading all detection models...
+2025-08-07 13:58:44 - detection.model_loader - INFO - load_vehicle_model:105 - 🔄 Loading vehicle detection model from model\yolo11s.pt
+2025-08-07 13:58:44 - detection.model_loader - INFO - _optimize_model:170 - 🔧 Compiling vehicle model for optimization
+2025-08-07 13:58:48 - detection.model_loader - INFO - _warmup_model:191 - 🔥 Warming up vehicle model...
+2025-08-07 13:59:08 - detection.model_loader - WARNING - _warmup_model:219 - ⚠️ Model warmup failed for vehicle: RuntimeError: Compiler: cl is not found.
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+2025-08-07 13:59:08 - detection.model_loader - INFO - load_vehicle_model:117 - ✅ Vehicle detection model loaded and optimized
+2025-08-07 13:59:08 - detection.model_loader - INFO - load_plate_model:141 - 🔄 Loading license plate detection model from model\license-plate-finetune-v1m.pt
+2025-08-07 13:59:08 - detection.model_loader - INFO - _optimize_model:170 - 🔧 Compiling plate model for optimization
+2025-08-07 13:59:08 - detection.model_loader - INFO - _warmup_model:191 - 🔥 Warming up plate model...
+2025-08-07 13:59:51 - detection.model_loader - WARNING - _warmup_model:219 - ⚠️ Model warmup failed for plate: RuntimeError: Compiler: cl is not found.
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+2025-08-07 13:59:51 - detection.model_loader - INFO - load_plate_model:153 - ✅ License plate detection model loaded and optimized
+2025-08-07 13:59:51 - detection.model_loader - INFO - _log_model_info:260 - 📊 Vehicle Model Info:
+2025-08-07 13:59:51 - detection.model_loader - INFO - _log_model_info:262 -    name: vehicle
+2025-08-07 13:59:51 - detection.model_loader - INFO - _log_model_info:262 -    device: cpu
+2025-08-07 13:59:51 - detection.model_loader - INFO - _log_model_info:262 -    dtype: torch.float32
+2025-08-07 13:59:51 - detection.model_loader - INFO - _log_model_info:262 -    num_classes: 80
+2025-08-07 13:59:51 - detection.model_loader - INFO - _log_model_info:262 -    input_size: unknown
+2025-08-07 13:59:51 - detection.model_loader - INFO - _log_model_info:267 -    GPU Memory: 0.0MB allocated
+2025-08-07 13:59:51 - detection.model_loader - INFO - _log_model_info:260 - 📊 Plate Model Info:
+2025-08-07 13:59:51 - detection.model_loader - INFO - _log_model_info:262 -    name: plate
+2025-08-07 13:59:51 - detection.model_loader - INFO - _log_model_info:262 -    device: cpu
+2025-08-07 13:59:51 - detection.model_loader - INFO - _log_model_info:262 -    dtype: torch.float32
+2025-08-07 13:59:51 - detection.model_loader - INFO - _log_model_info:262 -    num_classes: 1
+2025-08-07 13:59:51 - detection.model_loader - INFO - _log_model_info:262 -    input_size: unknown
+2025-08-07 13:59:51 - detection.model_loader - INFO - _log_model_info:267 -    GPU Memory: 0.0MB allocated
+2025-08-07 13:59:51 - detection.model_loader - INFO - load_all_models:241 - ✅ All models loaded successfully
+2025-08-07 13:59:51 - root - INFO - main:61 - ✅ Models loaded successfully
+2025-08-07 13:59:51 - root - INFO - main:64 - 🔄 Loading parking spots configuration...
+2025-08-07 13:59:51 - utils.file_utils - INFO - load_parking_spots:77 - 📖 Loading parking spots from: config/parking_spots.json
+2025-08-07 13:59:51 - utils.file_utils - INFO - load_parking_spots:105 - ✅ Loaded 6 valid parking spots
+2025-08-07 13:59:51 - root - INFO - main:66 - ✅ Loaded 6 parking spots
+2025-08-07 13:59:51 - root - INFO - main:69 - 🔄 Initializing Enhanced Parking Monitor...
+2025-08-07 13:59:51 - monitoring.parking_monitor - INFO - __init__:224 - 🏁 Enhanced Parking Monitor initialized (FIXED VERSION)
+2025-08-07 13:59:51 - monitoring.parking_monitor - INFO - __init__:225 -    Parking spots: 6
+2025-08-07 13:59:51 - monitoring.parking_monitor - INFO - __init__:226 -    Detection stability threshold: 3
+2025-08-07 13:59:51 - monitoring.parking_monitor - INFO - __init__:227 -    Vehicle assignment: ENABLED (1 vehicle = 1 spot)
+2025-08-07 13:59:51 - detection.vehicle_detector - INFO - __init__:79 - 🚗 Enhanced Vehicle Detector initialized
+2025-08-07 13:59:51 - detection.vehicle_detector - INFO - __init__:80 -    Device: cpu
+2025-08-07 13:59:51 - detection.vehicle_detector - INFO - __init__:81 -    Confidence threshold: 0.6
+2025-08-07 13:59:51 - detection.vehicle_detector - INFO - __init__:82 -    Image size: 640
+2025-08-07 13:59:51 - detection.vehicle_detector - INFO - __init__:83 -    Supported classes: ['car', 'motorcycle', 'bus', 'truck']
+2025-08-07 13:59:51 - detection.plate_detector - INFO - __init__:69 - 🔢 Enhanced Plate Detector initialized
+2025-08-07 13:59:51 - detection.plate_detector - INFO - __init__:70 -    Device: cpu
+2025-08-07 13:59:51 - detection.plate_detector - INFO - __init__:71 -    Confidence threshold: 0.4
+2025-08-07 13:59:51 - detection.plate_detector - INFO - __init__:72 -    Image size: 416
+2025-08-07 13:59:51 - detection.plate_detector - INFO - __init__:73 -    Plate area range: 100-50000 pixels
+2025-08-07 13:59:51 - detection.plate_detector - INFO - __init__:74 -    Aspect ratio range: 0.5-5.0
+2025-08-07 13:59:51 - monitoring.parking_monitor - INFO - initialize_models:260 - ✅ Detection models initialized successfully
+2025-08-07 13:59:51 - monitoring.parking_monitor - INFO - start_monitoring:691 - 🚀 Parking monitoring started
+2025-08-07 13:59:51 - root - INFO - main:73 - ✅ Monitor initialized successfully
+2025-08-07 13:59:51 - root - INFO - main:98 - 🎬 Video info: 926 frames, 30.0 FPS, 30.9s duration
+2025-08-07 13:59:51 - root - INFO - main:110 - 🚀 Starting Enhanced Parking System...
+2025-08-07 13:59:53 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A1: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:59:53 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A2: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:59:53 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A3: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:59:53 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A4: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:59:53 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A5: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 13:59:53 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A6: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 14:00:00 - root - INFO - main:148 - ⚡ FPS: 3.5 | Occupancy: 0.0% | Occupied: 0/6 | Events: 0
+2025-08-07 14:00:02 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A1: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 14:00:08 - root - INFO - main:148 - ⚡ FPS: 3.7 | Occupancy: 16.7% | Occupied: 1/6 | Events: 0
+2025-08-07 14:00:15 - root - INFO - main:148 - ⚡ FPS: 3.9 | Occupancy: 16.7% | Occupied: 1/6 | Events: 0
+2025-08-07 14:00:17 - detection.vehicle_detector - INFO - _log_performance_stats:412 - 🚗 Vehicle Detection Performance (last 100 frames):
+2025-08-07 14:00:17 - detection.vehicle_detector - INFO - _log_performance_stats:413 -    Average time: 226.0ms
+2025-08-07 14:00:17 - detection.vehicle_detector - INFO - _log_performance_stats:414 -    Min/Max time: 164.9/963.7ms
+2025-08-07 14:00:17 - detection.vehicle_detector - INFO - _log_performance_stats:415 -    FPS: 4.4
+2025-08-07 14:00:17 - detection.vehicle_detector - INFO - _log_performance_stats:416 -    Active tracks: 3
+2025-08-07 14:00:17 - detection.vehicle_detector - INFO - _log_performance_stats:417 -    Avg detections/frame: 1.8
+2025-08-07 14:00:17 - monitoring.parking_monitor - INFO - _log_performance_stats:649 - 🏁 Parking Monitor Performance (last 100 frames):
+2025-08-07 14:00:17 - monitoring.parking_monitor - INFO - _log_performance_stats:650 -    Processing time: 227.3ms avg, 963.7ms max
+2025-08-07 14:00:17 - monitoring.parking_monitor - INFO - _log_performance_stats:651 -    Processing FPS: 4.4
+2025-08-07 14:00:17 - monitoring.parking_monitor - INFO - _log_performance_stats:652 -    Occupied spots: 1/6
+2025-08-07 14:00:17 - monitoring.parking_monitor - INFO - _log_performance_stats:653 -    Events generated: 0
+2025-08-07 14:00:17 - monitoring.parking_monitor - INFO - _log_performance_stats:654 -    Assignment method: Optimal assignment (1 vehicle = 1 spot)
+2025-08-07 14:00:20 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A1: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 14:00:22 - root - INFO - main:158 - 📊 System Summary:
+2025-08-07 14:00:22 - root - INFO - main:159 -    - Occupancy: 0.0% (0/6)
+2025-08-07 14:00:22 - root - INFO - main:161 -    - Processing: Frames=117, Events=0
+2025-08-07 14:00:22 - root - INFO - main:163 -    - Performance: 4.6 FPS, 218.0ms avg
+2025-08-07 14:00:23 - root - INFO - main:148 - ⚡ FPS: 3.9 | Occupancy: 0.0% | Occupied: 0/6 | Events: 0
+2025-08-07 14:00:30 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A4: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 14:00:30 - root - INFO - main:148 - ⚡ FPS: 3.9 | Occupancy: 16.7% | Occupied: 1/6 | Events: 0
+2025-08-07 14:00:38 - root - INFO - main:148 - ⚡ FPS: 3.9 | Occupancy: 16.7% | Occupied: 1/6 | Events: 0
+2025-08-07 14:00:43 - detection.vehicle_detector - INFO - _log_performance_stats:412 - 🚗 Vehicle Detection Performance (last 100 frames):
+2025-08-07 14:00:43 - detection.vehicle_detector - INFO - _log_performance_stats:413 -    Average time: 223.3ms
+2025-08-07 14:00:43 - detection.vehicle_detector - INFO - _log_performance_stats:414 -    Min/Max time: 170.7/308.0ms
+2025-08-07 14:00:43 - detection.vehicle_detector - INFO - _log_performance_stats:415 -    FPS: 4.5
+2025-08-07 14:00:43 - detection.vehicle_detector - INFO - _log_performance_stats:416 -    Active tracks: 1
+2025-08-07 14:00:43 - detection.vehicle_detector - INFO - _log_performance_stats:417 -    Avg detections/frame: 1.5
+2025-08-07 14:00:43 - monitoring.parking_monitor - INFO - _log_performance_stats:649 - 🏁 Parking Monitor Performance (last 100 frames):
+2025-08-07 14:00:43 - monitoring.parking_monitor - INFO - _log_performance_stats:650 -    Processing time: 224.7ms avg, 308.0ms max
+2025-08-07 14:00:43 - monitoring.parking_monitor - INFO - _log_performance_stats:651 -    Processing FPS: 4.5
+2025-08-07 14:00:43 - monitoring.parking_monitor - INFO - _log_performance_stats:652 -    Occupied spots: 1/6
+2025-08-07 14:00:43 - monitoring.parking_monitor - INFO - _log_performance_stats:653 -    Events generated: 0
+2025-08-07 14:00:43 - monitoring.parking_monitor - INFO - _log_performance_stats:654 -    Assignment method: Optimal assignment (1 vehicle = 1 spot)
+2025-08-07 14:00:46 - root - INFO - main:148 - ⚡ FPS: 3.8 | Occupancy: 16.7% | Occupied: 1/6 | Events: 0
+2025-08-07 14:00:50 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A4: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 14:00:52 - root - INFO - main:158 - 📊 System Summary:
+2025-08-07 14:00:52 - root - INFO - main:159 -    - Occupancy: 0.0% (0/6)
+2025-08-07 14:00:52 - root - INFO - main:161 -    - Processing: Frames=231, Events=0
+2025-08-07 14:00:52 - root - INFO - main:163 -    - Performance: 4.5 FPS, 222.6ms avg
+2025-08-07 14:00:54 - root - INFO - main:148 - ⚡ FPS: 3.8 | Occupancy: 0.0% | Occupied: 0/6 | Events: 0
+2025-08-07 14:00:59 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A6: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 14:01:01 - root - INFO - main:148 - ⚡ FPS: 3.9 | Occupancy: 16.7% | Occupied: 1/6 | Events: 0
+2025-08-07 14:01:09 - detection.vehicle_detector - INFO - _log_performance_stats:412 - 🚗 Vehicle Detection Performance (last 100 frames):
+2025-08-07 14:01:09 - detection.vehicle_detector - INFO - _log_performance_stats:413 -    Average time: 219.6ms
+2025-08-07 14:01:09 - detection.vehicle_detector - INFO - _log_performance_stats:414 -    Min/Max time: 168.6/284.2ms
+2025-08-07 14:01:09 - detection.vehicle_detector - INFO - _log_performance_stats:415 -    FPS: 4.6
+2025-08-07 14:01:09 - detection.vehicle_detector - INFO - _log_performance_stats:416 -    Active tracks: 1
+2025-08-07 14:01:09 - detection.vehicle_detector - INFO - _log_performance_stats:417 -    Avg detections/frame: 1.2
+2025-08-07 14:01:09 - monitoring.parking_monitor - INFO - _log_performance_stats:649 - 🏁 Parking Monitor Performance (last 100 frames):
+2025-08-07 14:01:09 - monitoring.parking_monitor - INFO - _log_performance_stats:650 -    Processing time: 220.7ms avg, 286.2ms max
+2025-08-07 14:01:09 - monitoring.parking_monitor - INFO - _log_performance_stats:651 -    Processing FPS: 4.5
+2025-08-07 14:01:09 - monitoring.parking_monitor - INFO - _log_performance_stats:652 -    Occupied spots: 1/6
+2025-08-07 14:01:09 - monitoring.parking_monitor - INFO - _log_performance_stats:653 -    Events generated: 0
+2025-08-07 14:01:09 - monitoring.parking_monitor - INFO - _log_performance_stats:654 -    Assignment method: Optimal assignment (1 vehicle = 1 spot)
+2025-08-07 14:01:09 - root - INFO - main:148 - ⚡ FPS: 3.9 | Occupancy: 16.7% | Occupied: 1/6 | Events: 0
+2025-08-07 14:01:22 - root - INFO - main:158 - 📊 System Summary:
+2025-08-07 14:01:22 - root - INFO - main:159 -    - Occupancy: 16.7% (1/6)
+2025-08-07 14:01:22 - root - INFO - main:161 -    - Processing: Frames=322, Events=0
+2025-08-07 14:01:22 - root - INFO - main:163 -    - Performance: 3.3 FPS, 300.4ms avg
+2025-08-07 14:01:28 - root - INFO - main:148 - ⚡ FPS: 3.4 | Occupancy: 16.7% | Occupied: 1/6 | Events: 0
+2025-08-07 14:01:31 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A6: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 14:01:49 - root - INFO - main:148 - ⚡ FPS: 3.1 | Occupancy: 0.0% | Occupied: 0/6 | Events: 0
+2025-08-07 14:01:52 - root - INFO - main:158 - 📊 System Summary:
+2025-08-07 14:01:52 - root - INFO - main:159 -    - Occupancy: 0.0% (0/6)
+2025-08-07 14:01:52 - root - INFO - main:161 -    - Processing: Frames=365, Events=0
+2025-08-07 14:01:52 - root - INFO - main:163 -    - Performance: 2.0 FPS, 494.4ms avg
+2025-08-07 14:01:54 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A3: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 14:02:08 - root - INFO - main:148 - ⚡ FPS: 2.9 | Occupancy: 16.7% | Occupied: 1/6 | Events: 0
+2025-08-07 14:02:14 - detection.vehicle_detector - INFO - _log_performance_stats:412 - 🚗 Vehicle Detection Performance (last 100 frames):
+2025-08-07 14:02:14 - detection.vehicle_detector - INFO - _log_performance_stats:413 -    Average time: 620.7ms
+2025-08-07 14:02:14 - detection.vehicle_detector - INFO - _log_performance_stats:414 -    Min/Max time: 210.1/801.2ms
+2025-08-07 14:02:14 - detection.vehicle_detector - INFO - _log_performance_stats:415 -    FPS: 1.6
+2025-08-07 14:02:14 - detection.vehicle_detector - INFO - _log_performance_stats:416 -    Active tracks: 1
+2025-08-07 14:02:14 - detection.vehicle_detector - INFO - _log_performance_stats:417 -    Avg detections/frame: 1.1
+2025-08-07 14:02:14 - monitoring.parking_monitor - INFO - _log_performance_stats:649 - 🏁 Parking Monitor Performance (last 100 frames):
+2025-08-07 14:02:14 - monitoring.parking_monitor - INFO - _log_performance_stats:650 -    Processing time: 622.2ms avg, 806.4ms max
+2025-08-07 14:02:14 - monitoring.parking_monitor - INFO - _log_performance_stats:651 -    Processing FPS: 1.6
+2025-08-07 14:02:14 - monitoring.parking_monitor - INFO - _log_performance_stats:652 -    Occupied spots: 1/6
+2025-08-07 14:02:14 - monitoring.parking_monitor - INFO - _log_performance_stats:653 -    Events generated: 0
+2025-08-07 14:02:14 - monitoring.parking_monitor - INFO - _log_performance_stats:654 -    Assignment method: Optimal assignment (1 vehicle = 1 spot)
+2025-08-07 14:02:23 - root - INFO - main:158 - 📊 System Summary:
+2025-08-07 14:02:23 - root - INFO - main:159 -    - Occupancy: 16.7% (1/6)
+2025-08-07 14:02:23 - root - INFO - main:161 -    - Processing: Frames=413, Events=0
+2025-08-07 14:02:23 - root - INFO - main:163 -    - Performance: 1.6 FPS, 642.8ms avg
+2025-08-07 14:02:27 - root - INFO - main:148 - ⚡ FPS: 2.7 | Occupancy: 16.7% | Occupied: 1/6 | Events: 0
+2025-08-07 14:02:33 - monitoring.parking_monitor - ERROR - _process_parking_spots_with_assignments:392 - Error processing spot A3: ParkingEvent.__init__() got an unexpected keyword argument 'event_id'
+2025-08-07 14:02:35 - root - INFO - main:148 - ⚡ FPS: 2.8 | Occupancy: 0.0% | Occupied: 0/6 | Events: 0
+2025-08-07 14:02:38 - root - INFO - main:116 - 📹 End of video reached
+2025-08-07 14:02:38 - root - INFO - main:208 - 🧹 Starting cleanup...
+2025-08-07 14:02:38 - monitoring.parking_monitor - INFO - cleanup:700 - 🧹 Cleaning up parking monitor...
+2025-08-07 14:02:38 - monitoring.parking_monitor - INFO - stop_monitoring:696 - ⏹️ Parking monitoring stopped
+2025-08-07 14:02:38 - detection.vehicle_detector - INFO - cleanup:460 - 🧹 Cleaning up vehicle detector...
+2025-08-07 14:02:38 - detection.vehicle_detector - INFO - cleanup:466 - ✅ Vehicle detector cleanup completed
+2025-08-07 14:02:38 - detection.plate_detector - INFO - cleanup:485 - 🧹 Cleaning up plate detector...
+2025-08-07 14:02:38 - detection.plate_detector - INFO - cleanup:493 - ✅ Plate detector cleanup completed
+2025-08-07 14:02:38 - monitoring.parking_monitor - INFO - cleanup:717 - ✅ Parking monitor cleanup completed
+2025-08-07 14:02:38 - root - INFO - main:215 - 🔚 Enhanced Parking System completed
