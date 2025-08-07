@@ -135,8 +135,18 @@ class StateTracker:
             }
 
 # Factory functions
+# Make sure to import ImageProcessor if it's defined elsewhere, or define a stub here
+class ImageProcessor:
+    def __init__(self, config):
+        self.config = config
+
 def create_image_processor(config):
     return ImageProcessor(config)
+
+class PlateValidator:
+    def __init__(self):
+        pass
+    # Add validation methods as needed
 
 def create_plate_validator():
     return PlateValidator()
