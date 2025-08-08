@@ -44,6 +44,8 @@ const VehicleSchema = new mongoose.Schema({
     plateNumber: { type: String, required: true, unique: true },
     vehicleType: { type: String, enum: VehicleType, default: 'CAR_UNDER_9' },
     createdAt: { type: Date, default: Date.now },
+    vehicle_image: String,
+    plate_image: String,
     // Thông tin bổ sung từ camera
     first_detected_at: { type: Date, default: Date.now },
     last_seen_at: { type: Date, default: Date.now },
