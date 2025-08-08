@@ -1,12 +1,11 @@
-# optimized_parking_system.py
+
 """
-Hệ thống Parking Real-time Tối ưu - Kết nối Node.js Server
-- Xử lý hoàn hảo kết nối với Node.js server
-- Tối ưu OCR performance và ESRGAN
-- Smart caching và memory management
-- Offline mode với queue system
-- Error handling và retry mechanisms
+Hệ thống Parking Real-time Tối ưu - Đã tách OCR module
+- Sử dụng module plate_ocr_processor riêng biệt
+- Tối ưu performance và memory management
+- Smart caching và error handling
 - Real-time monitoring và statistics
+- Offline mode với queue system
 """
 
 import cv2
@@ -36,33 +35,16 @@ import hashlib
 from urllib3.exceptions import InsecureRequestWarning
 import warnings
 
+# Import module OCR đã tách
+from plate_ocr_processor import PlateOCRProcessor, create_plate_ocr_processor, OCRConfig
+
 # Suppress warnings
 warnings.filterwarnings("ignore", category=InsecureRequestWarning)
 logging.getLogger("ultralytics").setLevel(logging.WARNING)
 
-# Import thêm cho Real-ESRGAN và PaddleOCR
-try:
-    from basicsr.archs.rrdbnet_arch import RRDBNet
-    from realesrgan import RealESRGANer
-    print("✅ Real-ESRGAN imported successfully")
-    ESRGAN_AVAILABLE = True
-except ImportError:
-    print("❌ Real-ESRGAN not available. Install: pip install realesrgan")
-    RealESRGANer = None
-    ESRGAN_AVAILABLE = False
-
-try:
-    from paddleocr import PaddleOCR
-    print("✅ PaddleOCR imported successfully")
-    PADDLEOCR_AVAILABLE = True
-except ImportError:
-    print("❌ PaddleOCR not available. Install: pip install paddleocr")
-    PaddleOCR = None
-    PADDLEOCR_AVAILABLE = False
-
 # Enhanced Configuration
 @dataclass
-class EnhancedConfig:
+class SystemConfig:
     # System identification
     CAMERA_ID: str = "CAM_001"
     LOCATION_NAME: str = "Bãi đỗ xe tầng 1"
@@ -85,38 +67,25 @@ class EnhancedConfig:
     # Detection thresholds
     VEHICLE_CONF: float = 0.6
     PLATE_CONF: float = 0.4
-    OCR_MIN_CONF: float = 0.4
     INTERSECTION_THRESHOLD: float = 0.3
     
-    # Enhancement settings
-    USE_REAL_ESRGAN: bool = True
-    ESRGAN_SCALE: int = 4
-    ESRGAN_TILE_SIZE: int = 128
-    ENABLE_SMART_ENHANCEMENT: bool = True
-    
     # Processing mode
-    ENABLE_CACHING: bool = True
-    CACHE_SIZE: int = 100
-    CACHE_EXPIRE_MINUTES: int = 30
-    
-    # Offline mode settings
-    ENABLE_OFFLINE_MODE: bool = True
-    OFFLINE_QUEUE_SIZE: int = 200
-    SYNC_INTERVAL: float = 15.0
-    BATCH_SYNC_SIZE: int = 10
-    
-    # Image settings
-    MAX_PLATE_SIZE: tuple = (300, 100)
-    IMAGE_QUALITY: int = 85
     SAVE_IMAGES: bool = True
+    IMAGE_QUALITY: int = 85
     IMAGE_CLEANUP_HOURS: int = 24
     
     # Stability settings
     MIN_DETECTION_FRAMES: int = 3
     MAX_MISSED_FRAMES: int = 5
     STATE_TIMEOUT_MINUTES: int = 60
+    
+    # Offline mode settings
+    ENABLE_OFFLINE_MODE: bool = True
+    OFFLINE_QUEUE_SIZE: int = 200
+    SYNC_INTERVAL: float = 15.0
+    BATCH_SYNC_SIZE: int = 10
 
-config = EnhancedConfig()
+config = SystemConfig()
 
 # Setup logging
 logging.basicConfig(
@@ -129,11 +98,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-print(f"\n🚀 Enhanced Parking System - Node.js Integration:")
+print(f"\n🚀 Enhanced Parking System - Modularized Version:")
 print(f"   - Server URL: {config.SYNC_SERVER_URL}")
 print(f"   - Offline Mode: {config.ENABLE_OFFLINE_MODE}")
-print(f"   - Enhancement: {config.USE_REAL_ESRGAN and ESRGAN_AVAILABLE}")
-print(f"   - OCR Engine: {'PaddleOCR' if PADDLEOCR_AVAILABLE else 'None'}")
+print(f"   - OCR Module: Separated")
 print(f"   - YOLO Size: {config.YOLO_IMG_SIZE}")
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -143,468 +111,6 @@ logger.info(f"Using device: {device}")
 directories = ['vehicle_images', 'plate_images', 'enhanced_images', 'weights', 'logs']
 for directory in directories:
     os.makedirs(directory, exist_ok=True)
-
-# Enhanced Image Enhancer với caching và error handling
-class EnhancedImageProcessor:
-    def __init__(self):
-        self.upsampler = None
-        self.paddle_ocr = None
-        self.enhancement_cache = {} if config.ENABLE_CACHING else None
-        self.cache_timestamps = {} if config.ENABLE_CACHING else None
-        self.processing_stats = {
-            'enhancement_count': 0,
-            'ocr_count': 0,
-            'cache_hits': 0,
-            'cache_misses': 0,
-            'enhancement_time': deque(maxlen=100),
-            'ocr_time': deque(maxlen=100)
-        }
-        self._init_models()
-    
-    def _init_models(self):
-        """Khởi tạo models với comprehensive error handling"""
-        try:
-            # Initialize Real-ESRGAN
-            if config.USE_REAL_ESRGAN and ESRGAN_AVAILABLE:
-                self._init_esrgan()
-            
-            # Initialize PaddleOCR
-            if PADDLEOCR_AVAILABLE:
-                self._init_paddleocr()
-                
-        except Exception as e:
-            logger.error(f"Model initialization error: {e}")
-    
-    def _init_esrgan(self):
-        """Initialize Real-ESRGAN model"""
-        try:
-            model_path = "weights/RealESRGAN_x4plus.pth"
-            
-            if not os.path.exists(model_path):
-                logger.info("Downloading Real-ESRGAN model...")
-                self._download_esrgan_model(model_path)
-            
-            model = RRDBNet(
-                num_in_ch=3,
-                num_out_ch=3,
-                num_feat=64,
-                num_block=23,
-                num_grow_ch=32,
-                scale=config.ESRGAN_SCALE
-            )
-            
-            self.upsampler = RealESRGANer(
-                scale=config.ESRGAN_SCALE,
-                model_path=model_path,
-                model=model,
-                tile=config.ESRGAN_TILE_SIZE,
-                tile_pad=4,
-                pre_pad=0,
-                half=True if device == 'cuda' else False,
-                gpu_id=0 if device == 'cuda' else None
-            )
-            
-            logger.info("✅ Real-ESRGAN initialized successfully")
-            
-        except Exception as e:
-            logger.error(f"ESRGAN initialization error: {e}")
-            self.upsampler = None
-    
-    def _init_paddleocr(self):
-        """Initialize PaddleOCR"""
-        try:
-            self.paddle_ocr = PaddleOCR(
-                use_angle_cls=True,
-                lang='en',
-                use_gpu=torch.cuda.is_available(),
-                show_log=False,
-                det_limit_side_len=320,
-                rec_batch_num=1,
-                det_algorithm='DB',
-                rec_algorithm='CRNN',
-                drop_score=0.3,
-                max_text_length=25
-            )
-            logger.info("✅ PaddleOCR initialized successfully")
-            
-        except Exception as e:
-            logger.error(f"PaddleOCR initialization error: {e}")
-            self.paddle_ocr = None
-    
-    def _download_esrgan_model(self, model_path):
-        """Download Real-ESRGAN model with progress tracking"""
-        try:
-            url = "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth"
-            
-            response = requests.get(url, stream=True, timeout=300)
-            response.raise_for_status()
-            
-            total_size = int(response.headers.get('content-length', 0))
-            downloaded = 0
-            
-            with open(model_path, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    if chunk:
-                        f.write(chunk)
-                        downloaded += len(chunk)
-                        if total_size > 0:
-                            percent = (downloaded / total_size) * 100
-                            print(f"\r📥 Download progress: {percent:.1f}%", end='')
-            
-            print("\n✅ Real-ESRGAN model downloaded successfully")
-            logger.info("Real-ESRGAN model downloaded")
-            
-        except Exception as e:
-            logger.error(f"Failed to download Real-ESRGAN model: {e}")
-            raise
-    
-    def _get_cache_key(self, image):
-        """Generate cache key for image"""
-        image_hash = hashlib.md5(image.tobytes()).hexdigest()[:16]
-        return f"{image.shape}_{image_hash}"
-    
-    def _is_cache_valid(self, cache_key):
-        """Check if cache entry is still valid"""
-        if not self.cache_timestamps or cache_key not in self.cache_timestamps:
-            return False
-        
-        cache_time = self.cache_timestamps[cache_key]
-        expire_time = cache_time + timedelta(minutes=config.CACHE_EXPIRE_MINUTES)
-        return datetime.now() < expire_time
-    
-    def should_enhance(self, image):
-        """Smart enhancement decision"""
-        if not config.ENABLE_SMART_ENHANCEMENT or self.upsampler is None:
-            return False
-        
-        h, w = image.shape[:2]
-        
-        # Skip if image is too large or too small
-        if max(h, w) > 400 or min(h, w) < 20:
-            return False
-        
-        # Enhance small to medium sized images
-        return 20 <= min(h, w) <= 150 and max(h, w) <= 400
-    
-    def enhance_image(self, image):
-        """Enhanced image processing with caching"""
-        if not self.should_enhance(image):
-            return image
-        
-        # Check cache
-        cache_key = None
-        if self.enhancement_cache is not None:
-            cache_key = self._get_cache_key(image)
-            if cache_key in self.enhancement_cache and self._is_cache_valid(cache_key):
-                self.processing_stats['cache_hits'] += 1
-                return self.enhancement_cache[cache_key]
-            
-            self.processing_stats['cache_misses'] += 1
-        
-        start_time = time.time()
-        
-        try:
-            # Preprocessing
-            h, w = image.shape[:2]
-            if max(h, w) > 300:
-                scale = 300 / max(h, w)
-                new_w, new_h = int(w * scale), int(h * scale)
-                image = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_AREA)
-            
-            # Enhancement
-            enhanced, _ = self.upsampler.enhance(image, outscale=config.ESRGAN_SCALE)
-            
-            # Cache result
-            if cache_key and self.enhancement_cache is not None:
-                # Clean old cache entries if cache is full
-                if len(self.enhancement_cache) >= config.CACHE_SIZE:
-                    self._clean_cache()
-                
-                self.enhancement_cache[cache_key] = enhanced
-                self.cache_timestamps[cache_key] = datetime.now()
-            
-            process_time = time.time() - start_time
-            self.processing_stats['enhancement_time'].append(process_time)
-            self.processing_stats['enhancement_count'] += 1
-            
-            return enhanced
-            
-        except Exception as e:
-            logger.error(f"Enhancement error: {e}")
-            return image
-    
-    def _clean_cache(self):
-        """Clean expired cache entries"""
-        if not self.enhancement_cache or not self.cache_timestamps:
-            return
-        
-        current_time = datetime.now()
-        expired_keys = []
-        
-        for key, timestamp in self.cache_timestamps.items():
-            if current_time - timestamp > timedelta(minutes=config.CACHE_EXPIRE_MINUTES):
-                expired_keys.append(key)
-        
-        for key in expired_keys:
-            self.enhancement_cache.pop(key, None)
-            self.cache_timestamps.pop(key, None)
-        
-        logger.info(f"Cleaned {len(expired_keys)} expired cache entries")
-    
-    def preprocess_for_ocr(self, image):
-        """Advanced preprocessing for OCR"""
-        try:
-            # Convert to grayscale
-            if len(image.shape) == 3:
-                gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            else:
-                gray = image
-            
-            # Apply CLAHE for contrast enhancement
-            clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-            enhanced = clahe.apply(gray)
-            
-            # Noise reduction
-            enhanced = cv2.fastNlMeansDenoising(enhanced, h=10)
-            
-            # Morphological operations
-            kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))
-            enhanced = cv2.morphologyEx(enhanced, cv2.MORPH_CLOSE, kernel)
-            
-            # Resize if too small
-            h, w = enhanced.shape
-            if min(h, w) < 32:
-                scale = 48 / min(h, w)
-                enhanced = cv2.resize(enhanced, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
-            
-            # Ensure minimum size for OCR
-            h, w = enhanced.shape
-            if h < 32 or w < 100:
-                target_h = max(32, h)
-                target_w = max(100, w)
-                enhanced = cv2.resize(enhanced, (target_w, target_h), interpolation=cv2.INTER_CUBIC)
-            
-            return cv2.cvtColor(enhanced, cv2.COLOR_GRAY2BGR)
-            
-        except Exception as e:
-            logger.error(f"Preprocessing error: {e}")
-            return image
-    
-    def ocr_plate(self, plate_image):
-        """Enhanced OCR with multiple strategies"""
-        if self.paddle_ocr is None:
-            return None, 0.0
-        
-        start_time = time.time()
-        results = []
-        
-        try:
-            # Strategy 1: Direct OCR
-            ocr_result = self.paddle_ocr.ocr(plate_image, cls=True)
-            if ocr_result and ocr_result[0]:
-                for line in ocr_result[0]:
-                    if len(line) >= 2:
-                        bbox, (text, conf) = line[0], line[1]
-                        if conf >= config.OCR_MIN_CONF:
-                            results.append((text.upper().strip(), conf))
-            
-            # Strategy 2: Preprocessed OCR
-            if not results or (results and max(r[1] for r in results) < 0.7):
-                preprocessed = self.preprocess_for_ocr(plate_image)
-                ocr_result = self.paddle_ocr.ocr(preprocessed, cls=True)
-                if ocr_result and ocr_result[0]:
-                    for line in ocr_result[0]:
-                        if len(line) >= 2:
-                            bbox, (text, conf) = line[0], line[1]
-                            if conf >= config.OCR_MIN_CONF * 0.8:
-                                results.append((text.upper().strip(), conf * 0.9))  # Slight penalty for preprocessing
-            
-            # Strategy 3: Enhanced OCR (if available)
-            if (not results or (results and max(r[1] for r in results) < 0.6)) and self.upsampler:
-                enhanced = self.enhance_image(plate_image)
-                if not np.array_equal(enhanced, plate_image):
-                    ocr_result = self.paddle_ocr.ocr(enhanced, cls=True)
-                    if ocr_result and ocr_result[0]:
-                        for line in ocr_result[0]:
-                            if len(line) >= 2:
-                                bbox, (text, conf) = line[0], line[1]
-                                if conf >= config.OCR_MIN_CONF * 0.7:
-                                    results.append((text.upper().strip(), conf * 0.95))  # Bonus for enhancement
-            
-            # Return best result
-            if results:
-                # Sort by confidence
-                results.sort(key=lambda x: x[1], reverse=True)
-                best_text, best_conf = results[0]
-                
-                # Validate result
-                if len(best_text) >= 3 and any(c.isdigit() for c in best_text):
-                    process_time = time.time() - start_time
-                    self.processing_stats['ocr_time'].append(process_time)
-                    self.processing_stats['ocr_count'] += 1
-                    return best_text, best_conf
-            
-            return None, 0.0
-            
-        except Exception as e:
-            logger.error(f"OCR error: {e}")
-            return None, 0.0
-    
-    def get_processing_stats(self):
-        """Get processing statistics"""
-        stats = self.processing_stats.copy()
-        
-        # Calculate averages
-        if stats['enhancement_time']:
-            stats['avg_enhancement_time'] = np.mean(stats['enhancement_time'])
-        else:
-            stats['avg_enhancement_time'] = 0
-        
-        if stats['ocr_time']:
-            stats['avg_ocr_time'] = np.mean(stats['ocr_time'])
-        else:
-            stats['avg_ocr_time'] = 0
-        
-        # Cache statistics
-        if config.ENABLE_CACHING:
-            stats['cache_size'] = len(self.enhancement_cache) if self.enhancement_cache else 0
-            total_requests = stats['cache_hits'] + stats['cache_misses']
-            stats['cache_hit_rate'] = (stats['cache_hits'] / total_requests * 100) if total_requests > 0 else 0
-        
-        return stats
-
-# Vietnamese Plate Validator với pattern matching nâng cao
-class VietnamesePlateValidator:
-    def __init__(self):
-        # Vietnamese province codes
-        self.province_codes = {
-            '11', '12', '13', '14', '15', '16', '17', '18', '19',  # Hanoi area
-            '29', '30', '31', '32', '33', '34', '35', '36', '37', '38',  # HCMC area
-            '43', '44', '47', '48', '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59',
-            '60', '61', '62', '63', '64', '65', '66', '67', '68', '69', '70', '71', '72', '73', '74', '75',
-            '76', '77', '78', '79', '80', '81', '82', '83', '84', '85', '86', '87', '88', '89', '90',
-            '91', '92', '93', '94', '95', '96', '97', '98', '99'
-        }
-        
-        # Common OCR corrections
-        self.ocr_corrections = {
-            'O': '0', 'I': '1', 'L': '1', 'Z': '2', 'S': '5', 
-            'G': '6', 'Q': '0', 'D': '0', 'T': '7', 'B': '8',
-            'A': '4', 'E': '3', 'U': '0'
-        }
-    
-    def clean_ocr_text(self, text):
-        """Advanced OCR text cleaning"""
-        if not text:
-            return ""
-        
-        # Remove special characters and spaces
-        cleaned = re.sub(r'[^A-Z0-9]', '', text.upper())
-        
-        # Apply OCR corrections intelligently
-        result = ""
-        for i, char in enumerate(cleaned):
-            if char in self.ocr_corrections:
-                # Context-aware correction
-                if i < len(cleaned) - 1:
-                    next_char = cleaned[i + 1]
-                    # If next char is digit, this should probably be digit too
-                    if next_char.isdigit() and char in ['O', 'Q', 'D']:
-                        result += '0'
-                    elif next_char.isalpha() and char in ['0']:
-                        result += 'O'
-                    else:
-                        result += self.ocr_corrections[char]
-                else:
-                    result += self.ocr_corrections[char]
-            else:
-                result += char
-        
-        return result
-    
-    def validate_vietnamese_plate(self, text):
-        """Comprehensive Vietnamese license plate validation"""
-        if not text or len(text) < 4:
-            return ""
-        
-        cleaned = self.clean_ocr_text(text)
-        
-        # Patterns for Vietnamese license plates
-        patterns = [
-            # Standard format: 30A-12345
-            r'^(\d{2})([A-Z])(\d{4,5})$',
-            # New format: 30AA-1234
-            r'^(\d{2})([A-Z]{2})(\d{4})$',
-            # Old format: 123A-456
-            r'^(\d{3})([A-Z])(\d{2,4})$',
-            # Special format: LD-12345
-            r'^([A-Z]{2})(\d{4,5})$',
-            # Military format: QN-1234
-            r'^([A-Z]{2})(\d{4})$',
-            # Diplomatic format: NG-123
-            r'^([A-Z]{2})(\d{3,4})$'
-        ]
-        
-        for pattern in patterns:
-            match = re.match(pattern, cleaned)
-            if match:
-                groups = match.groups()
-                
-                # Validate province code for standard formats
-                if len(groups[0]) == 2 and groups[0].isdigit():
-                    if groups[0] in self.province_codes:
-                        if len(groups) == 3:
-                            return f"{groups[0]}{groups[1]}-{groups[2]}"
-                        else:
-                            return f"{groups[0]}-{groups[1]}"
-                elif len(groups[0]) == 2 and groups[0].isalpha():
-                    # Special codes (diplomatic, military, etc.)
-                    special_codes = ['LD', 'QN', 'NG', 'TQ', 'HC']
-                    if groups[0] in special_codes:
-                        return f"{groups[0]}-{groups[1]}"
-                else:
-                    # Fallback formatting
-                    if len(groups) == 3:
-                        return f"{groups[0]}{groups[1]}-{groups[2]}"
-                    else:
-                        return f"{groups[0]}-{groups[1]}"
-        
-        # If no pattern matches but text looks valid
-        if (len(cleaned) >= 5 and 
-            any(c.isalpha() for c in cleaned) and 
-            any(c.isdigit() for c in cleaned)):
-            return cleaned
-        
-        return ""
-    
-    def is_valid_plate(self, text, min_length=4):
-        """Enhanced plate validation"""
-        if not text or len(text) < min_length:
-            return False
-        
-        has_letter = any(c.isalpha() for c in text)
-        has_number = any(c.isdigit() for c in text)
-        
-        # Check for reasonable length
-        if len(text) > 12:
-            return False
-        
-        # Check for minimum character requirements
-        if not (has_letter and has_number):
-            return False
-        
-        # Check for obvious OCR errors
-        invalid_patterns = [
-            r'^[^A-Z0-9]*$',  # Only special characters
-            r'^(.)\1{4,}',    # Too many repeated characters
-            r'[IL1]{3,}',     # Too many similar characters
-        ]
-        
-        for pattern in invalid_patterns:
-            if re.search(pattern, text):
-                return False
-        
-        return True
 
 # Enhanced NodeJS Server Sync với comprehensive error handling
 class EnhancedServerSync:
@@ -1149,8 +655,14 @@ class EnhancedParkingMonitor:
         # Core components
         self.parking_state = self._init_parking_state()
         self.server_sync = EnhancedServerSync(config.SYNC_SERVER_URL)
-        self.image_processor = EnhancedImageProcessor()
-        self.plate_validator = VietnamesePlateValidator()
+        
+        # Initialize OCR processor with optimized config
+        ocr_config = OCRConfig()
+        ocr_config.USE_REAL_ESRGAN = True
+        ocr_config.ENABLE_CACHING = True
+        ocr_config.OCR_MIN_CONF = 0.4
+        self.ocr_processor = PlateOCRProcessor(ocr_config)
+        
         self.state_tracker = VehicleStateTracker()
         
         # Performance tracking
@@ -1298,19 +810,18 @@ class EnhancedParkingMonitor:
                         cv2.imwrite(vehicle_image_path, car_crop, [cv2.IMWRITE_JPEG_QUALITY, config.IMAGE_QUALITY])
                         logger.debug(f"Saved vehicle image: {vehicle_filename}")
                     
-                    # Detect and process plates
+                    # Detect and process plates using separated OCR module
                     plate_result = self._detect_and_process_plates(
                         car_crop, spot_id, timestamp
                     )
                     
                     if plate_result:
-                        plate_text = plate_result['text']
+                        plate_text = plate_result['validated_text'] or plate_result['text']
                         plate_confidence = plate_result['confidence']
-                        plate_image_path = plate_result['plate_path']
-                        enhanced_plate_path = plate_result.get('enhanced_path')
+                        plate_image_path = plate_result.get('save_path')
                         
                         self.stats['plates_detected'] += 1
-                        if self.plate_validator.is_valid_plate(plate_text):
+                        if plate_result['is_valid']:
                             self.stats['plates_validated'] += 1
                         
                         logger.info(f"   ✅ Plate detected: {plate_text} (conf: {plate_confidence:.3f})")
@@ -1447,7 +958,7 @@ class EnhancedParkingMonitor:
         }
     
     def _detect_and_process_plates(self, car_image, spot_id, timestamp):
-        """Enhanced plate detection and processing"""
+        """Enhanced plate detection using separated OCR module"""
         try:
             # Detect plates with YOLO
             plate_results = plate_model(
@@ -1489,50 +1000,20 @@ class EnhancedParkingMonitor:
                     new_w = int(plate_crop.shape[1] * scale)
                     plate_crop = cv2.resize(plate_crop, (new_w, new_h), interpolation=cv2.INTER_CUBIC)
                 
-                # Save original plate image
+                # Save original plate image path
                 timestamp_str = int(timestamp.timestamp())
                 plate_filename = f"plate_{spot_id}_{timestamp_str}_{i}.jpg"
                 plate_image_path = os.path.join('plate_images', plate_filename)
-                cv2.imwrite(plate_image_path, plate_crop, [cv2.IMWRITE_JPEG_QUALITY, config.IMAGE_QUALITY])
                 
-                # Enhance image if needed
-                enhanced_plate_path = None
-                enhanced_plate = plate_crop
+                # Process plate using OCR module
+                ocr_result = self.ocr_processor.process_plate(plate_crop, plate_image_path)
                 
-                if self.image_processor.should_enhance(plate_crop):
-                    logger.debug(f"Enhancing plate {i+1}...")
-                    enhanced_plate = self.image_processor.enhance_image(plate_crop)
+                if ocr_result['text'] and ocr_result['confidence'] > 0:
+                    logger.debug(f"OCR result: '{ocr_result['validated_text'] or ocr_result['text']}' (conf: {ocr_result['confidence']:.3f})")
                     
-                    if enhanced_plate is not None and not np.array_equal(enhanced_plate, plate_crop):
-                        enhanced_filename = f"enhanced_plate_{spot_id}_{timestamp_str}_{i}.jpg"
-                        enhanced_plate_path = os.path.join('enhanced_images', enhanced_filename)
-                        cv2.imwrite(enhanced_plate_path, enhanced_plate, [cv2.IMWRITE_JPEG_QUALITY, config.IMAGE_QUALITY])
-                
-                # Perform OCR
-                logger.debug(f"Running OCR on plate {i+1}...")
-                text, conf = self.image_processor.ocr_plate(enhanced_plate)
-                
-                if text and conf > 0:
-                    # Validate and format plate
-                    formatted_plate = self.plate_validator.validate_vietnamese_plate(text)
-                    
-                    if formatted_plate and self.plate_validator.is_valid_plate(formatted_plate):
-                        final_text = formatted_plate
-                    elif self.plate_validator.is_valid_plate(text):
-                        final_text = text
-                    else:
-                        final_text = text
-                    
-                    logger.debug(f"OCR result: '{final_text}' (conf: {conf:.3f})")
-                    
-                    if conf > best_confidence:
-                        best_result = {
-                            'text': final_text,
-                            'confidence': conf,
-                            'plate_path': plate_image_path,
-                            'enhanced_path': enhanced_plate_path
-                        }
-                        best_confidence = conf
+                    if ocr_result['confidence'] > best_confidence:
+                        best_result = ocr_result
+                        best_confidence = ocr_result['confidence']
                 
                 # Early break for high confidence
                 if best_confidence > 0.9:
@@ -1557,9 +1038,9 @@ class EnhancedParkingMonitor:
                 # Clean up vehicle states
                 self.state_tracker.cleanup_old_states()
                 
-                # Clean up image processor cache
-                if hasattr(self.image_processor, '_clean_cache'):
-                    self.image_processor._clean_cache()
+                # Clean up OCR processor cache
+                if hasattr(self.ocr_processor, 'enhancer') and hasattr(self.ocr_processor.enhancer, '_clean_cache'):
+                    self.ocr_processor.enhancer._clean_cache()
                 
                 # Garbage collection
                 gc.collect()
@@ -1612,8 +1093,8 @@ class EnhancedParkingMonitor:
         # Server connection status
         connection_status = self.server_sync.get_connection_status()
         
-        # Image processor stats
-        processor_stats = self.image_processor.get_processing_stats()
+        # OCR processor stats
+        ocr_stats = self.ocr_processor.get_stats()
         
         # Calculate uptime
         uptime_seconds = time.time() - self.stats['start_time']
@@ -1641,7 +1122,7 @@ class EnhancedParkingMonitor:
                 'validation_rate': round((self.stats['plates_validated'] / max(1, self.stats['plates_detected'])) * 100, 1)
             },
             'server_connection': connection_status,
-            'image_processor': processor_stats,
+            'ocr_processor': ocr_stats,
             'spots_detail': [
                 {
                     'spot_id': spot_id,
@@ -1667,11 +1148,8 @@ class EnhancedParkingMonitor:
         # Cleanup server sync
         self.server_sync.cleanup()
         
-        # Clear image processor caches
-        if hasattr(self.image_processor, 'enhancement_cache') and self.image_processor.enhancement_cache:
-            self.image_processor.enhancement_cache.clear()
-        if hasattr(self.image_processor, 'cache_timestamps') and self.image_processor.cache_timestamps:
-            self.image_processor.cache_timestamps.clear()
+        # Cleanup OCR processor
+        self.ocr_processor.cleanup()
         
         # Final statistics
         uptime = time.time() - self.stats['start_time']
@@ -1743,10 +1221,8 @@ def load_models():
 def load_parking_spots():
     """Load and preprocess parking spots configuration"""
     try:
-        config_file = os.path.join('config', 'parking_spots.json')  # Sửa lại đường dẫn
-        if not os.path.exists(config_file):
-            raise FileNotFoundError(f"Parking spots configuration not found: {config_file}")
-        with open(config_file) as f:
+        # Đọc từ file JSON đã upload
+        with open('tests/parking_spots.json') as f:
             parking_data = json.load(f)
         
         spots = parking_data['parking_spots']
@@ -1829,7 +1305,7 @@ def main():
     logger.info("🚀 Starting Enhanced Parking System...")
     logger.info(f"🌐 Server: {config.SYNC_SERVER_URL}")
     logger.info(f"📡 Offline Mode: {'Enabled' if config.ENABLE_OFFLINE_MODE else 'Disabled'}")
-    logger.info(f"🔧 Enhancement: {'Enabled' if config.USE_REAL_ESRGAN and ESRGAN_AVAILABLE else 'Disabled'}")
+    logger.info(f"🔧 OCR Module: Separated and optimized")
     logger.info(f"🎯 Detection: Vehicle={config.VEHICLE_CONF}, Plate={config.PLATE_CONF}")
     
     try:
@@ -1960,7 +1436,8 @@ def main():
                     f"FPS: {processing_fps:.1f} | Frame: {frame_id}/{total_frames}",
                     f"Occupied: {system_status['parking_summary']['occupied_spots']}/{system_status['parking_summary']['total_spots']} ({system_status['parking_summary']['occupancy_rate']}%)",
                     f"{conn_indicator} Server | Sent: {system_status['processing_stats']['events_sent']} | {queue_info}",
-                    f"Plates: {system_status['processing_stats']['plates_detected']} detected, {system_status['processing_stats']['plates_validated']} valid"
+                    f"Plates: {system_status['processing_stats']['plates_detected']} detected, {system_status['processing_stats']['plates_validated']} valid",
+                    f"OCR: {system_status['ocr_processor'].get('ocr_count', 0)} processed"
                 ]
                 
                 # Draw info on frame
@@ -1980,7 +1457,7 @@ def main():
             # Periodic detailed summary
             if current_time - last_summary_time > SUMMARY_INTERVAL:
                 system_status = monitor.get_system_status()
-                processor_stats = system_status['image_processor']
+                ocr_stats = system_status['ocr_processor']
                 
                 logger.info(f"📊 System Summary:")
                 logger.info(f"   - Occupancy: {system_status['parking_summary']['occupancy_rate']}% "
@@ -1989,8 +1466,8 @@ def main():
                            f"{system_status['processing_stats']['plates_detected']} plates detected")
                 logger.info(f"   - Server: {'Connected' if system_status['server_connection']['is_connected'] else 'Offline'}, "
                            f"Queue: {system_status['server_connection']['offline_queue_size']}")
-                logger.info(f"   - Enhancement: {processor_stats.get('enhancement_count', 0)} processed, "
-                           f"Cache: {processor_stats.get('cache_hit_rate', 0):.1f}% hit rate")
+                logger.info(f"   - OCR: {ocr_stats.get('ocr_count', 0)} processed, "
+                           f"Enhancement: {ocr_stats.get('enhancer_enhancement_count', 0)} images")
                 
                 last_summary_time = current_time
             
